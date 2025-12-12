@@ -1,0 +1,161 @@
+---
+title: "Validation of Unconstrained Model for PSE"
+format: html
+---
+
+```{r}
+#| label: setup
+
+library("dplyr")
+library("ggplot2")
+
+library("lme4")
+library("rstan")
+```
+
+```{r}
+#| label: simulate-data
+
+# Simulation parameters
+sigma_epsilon <- 1
+p_negative_theta <- 0.2
+mu_theta <- 1
+
+n_subjects <- 85
+n_trials <- 200
+
+# Derived parameters
+sigma_theta <- -mu_theta / qnorm(p_negative_theta)
+id <- rep(1:n_subjects, each = n_trials)
+
+# Simulate data
+set.seed(123)
+theta <- rnorm(n_subjects, mean = mu_theta, sd = sigma_theta)
+y <- rnorm(n_subjects * n_trials, mean = theta[id], sd = sigma_epsilon)
+```
+
+```{r}
+#| label: fig-plot-data
+
+sim_data <- data.frame(
+  id = id,
+  y = y
+)
+
+mean(sim_data$y)
+sd(sim_data$y)
+
+sim_data |>
+  dplyr::summarize(
+    mean_y = mean(y)
+    , .by = id
+  ) |>
+  ggplot(aes(x = mean_y)) +
+  geom_histogram(bins = 15, color = "black", fill = "lightblue") +
+  labs(title = "Histogram of Subject Means", x = "Mean Y", y = "Count")
+```
+
+```{r}
+#| label: fit-frequentist-model
+
+lmer_fit <- lmer(y ~ 1 + (1 | id), data = sim_data)
+```
+
+```{r}
+#| label: plot-priors
+
+rnorm(1e5, mean = -0.5, sd = 0.5) |>
+  pnorm(0) |>
+  (\(x) x / 2)() |>
+  hist(
+    breaks = 50
+    , main = "Prior Distribution for PSE"
+    , xlab = "PSE"
+    , col = "lightblue"
+    , border = "black"
+  )
+
+curve(
+  dlnorm(x, meanlog = 1, sdlog = 1)
+  , from = 0, to = 5
+  , col = "red", lwd = 2
+)
+
+```
+
+```{r}
+#| label: fit-bayesian-model
+
+stan_model <- readLines("./models/pse-unconstrained.stan") |>
+  paste(collapse = "\n")
+
+stan_data <- list(
+  N = as.integer(n_subjects * n_trials)
+  , n_subjects = as.integer(n_subjects)
+  , id = as.integer(id)
+  , y = y
+
+  # Prior settings
+  , mu_theta_mean = 1
+  , mu_theta_sd = 1
+  , pi_mean = -0.5
+  , pi_sd = 0.5
+)
+
+fit <- rstan::stan(
+  model_code = stan_model
+  , data = stan_data
+  , iter = 2000
+  , warmup = 1000
+  , chains = 4
+  , cores = 4
+  , seed = 123
+  , init = list(
+    list(
+      mu_theta = 1
+      , sigma_theta = 1
+      , sigma2_epsilon = 1
+      , theta = rep(1, n_subjects)
+    )
+    , list(
+      mu_theta = 1
+      , sigma_theta = 0.5
+      , sigma2_epsilon = 0.5
+      , theta = rep(1, n_subjects)
+    )
+    , list(
+      mu_theta = 2
+      , sigma_theta = 2
+      , sigma2_epsilon = 2
+      , theta = rep(1, n_subjects)
+    )
+    , list(
+      mu_theta = 1
+      , sigma_theta = 1
+      , sigma2_epsilon = 1
+      , theta = rep(1, n_subjects)
+    )
+  )
+)
+```
+
+```{r}
+#| label: compare-estimates
+
+data.frame(
+  parameter = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")
+  , truth = c(mu_theta, sigma_theta, sigma_epsilon, p_negative_theta)
+  , bayes = fit |>
+    summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+    dplyr::pull("mean")
+  , mle = c(
+    fixef(lmer_fit)[1],
+    attr(VarCorr(lmer_fit)$id, "stddev"),
+    sigma(lmer_fit),
+    NA  # p_negative_theta is not estimated in the frequentist model
+  )
+) |>
+  knitr::kable()
+```
