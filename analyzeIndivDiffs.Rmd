@@ -1,0 +1,139 @@
+---
+title: "readTimCottier"
+output: html_document
+date: "2025-12-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 
+
+Can’t test against a constant in quid .
+
+Easiest thing:
+
+Compare unconstrainted model to the dominance model , which is that each individual has a positive.
+
+But to do that, still can't use their library because it's set up for two conditions.
+
+The way Haaf and Rouder define it, the hypothesis is about the sample not the population. Not important for the direction we are going in.
+
+The standardized effect size of the FLE , the average relative to residuals (measurement error or between-session variance).  In the model will go a point estimate and a prior on the between-session variance distribution, assuming some could be negative (the unconstrained model).
+
+
+
+```{r cars}
+#install.packages("R.matlab")
+#install.packages("quid") 
+library(R.matlab)
+library(quid) ##Haaf Rouder qualitative difference package
+library(tidyverse)
+```
+## Show how it works with the built-in Stroop example, from the vignette:
+
+The data set contains three columns of interest for our analysis: rtS is the dependent variable, which is the response time in seconds; ID is the participant ID; and cond, a factor with two levels indicating the condition (1 = congruent, 2 = incongruent). This study is a repeated measures design, and all participants completed several trials in both conditions.
+
+```{r stroopy, echo=FALSE}
+
+data(stroop)
+
+resStroop <- constraintBF(formula = rtS ~ ID + cond + ID:cond,
+                          data = stroop,
+                          whichRandom = "ID",
+                          ID = "ID",
+                          whichConstraint = c("cond" = "2 > 1"),
+                          rscaleEffects = c("ID" = 1, "cond" = 1/6, "ID:cond" = 1/10))
+
+```
+
+The data set contains three columns of interest for our analysis: rtS is the dependent variable, which is the response time in seconds; ID is the participant ID; and cond, a factor with two levels indicating the condition (1 = congruent, 2 = incongruent). This study is a repeated measures design, and all participants completed several trials in both conditions.
+
+
+## Load our data
+
+
+```{r readData, echo=FALSE}
+
+FLE<- readMat("/Users/alex/Documents/vision/motionPosition/TimothyCottier_Cottier/individ_diffs_data/FLE_Values(JOV).mat")
+
+overallOfBothSessions<- FLE$FLE.Overall
+overallOfBothSessions<- as_tibble(overallOfBothSessions)
+
+sess1JoV<-  as_tibble(FLE$FLE.Sess1)
+sess2JoV<-  as_tibble(FLE$FLE.Sess2)
+
+#European Journal of Neuroscience 2025 paper
+#Cottier_et_al_2023_Data(EJN).csv
+
+```
+
+Give data better column names
+
+Each has three columns: participant number, Column 2 is pixels column 3 is dva
+
+```{r , echo=FALSE}
+
+sess1JoV <- sess1JoV %>%
+  rename(
+    ID     = V1,
+    pixels = V2,
+    dva    = V3
+  )
+
+sess2JoV <- sess2JoV %>%
+  rename(
+    ID     = V1,
+    pixels = V2,
+    dva    = V3
+  )
+
+
+```
+
+Need to re-arrange the data so that session number is a column (make session long rather than wide)
+
+ID is the participant ID; and cond, a factor with two levels indicating the condition (1 = congruent, 2 = incongruent)
+
+```{r , echo=F}
+sess1JoV$session <- 1
+sess2JoV$session <- 2
+
+myOverallJoV<- rbind(sess1JoV, sess2JoV)
+```
+
+
+
+```{r , echo=FALSE}
+library(ggplot2)
+
+ggplot(myOverallJoV, aes(x=dva)) + geom_histogram() +
+  facet_grid(rows=vars(session)) +
+  xlab('FLE size (dva)') +
+  ggtitle('JoV2022 FLE') 
+
+# ggplot(overallOfBothSessions, aes(x=)) + geom_histogram() +
+#   xlab('FLE size (dva)') +
+#   ggtitle('JoV2022 FLE') 
+```
+## Reproduce scatterplot of s1 and s2
+
+```{r }
+
+wide <- myOverallJoV %>%
+  select(ID, dva, session) %>%
+  pivot_wider(
+    names_from = session,
+    values_from = dva,
+    names_prefix = "dva_"
+  )
+
+ggplot(wide, aes(x = dva_1, y = dva_2)) +
+  geom_point() +
+  labs(
+    x = "Session 1 dva",
+    y = "Session 2 dva"
+  )
+
+```
