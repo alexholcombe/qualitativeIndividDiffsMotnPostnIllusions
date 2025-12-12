@@ -56,7 +56,7 @@ The data set contains three columns of interest for our analysis: rtS is the dep
 
 ```{r readData, echo=FALSE}
 
-FLE<- readMat("/Users/alex/Documents/vision/motionPosition/TimothyCottier_Cottier/individ_diffs_data/FLE_Values(JOV).mat")
+FLE<- readMat("FLE_Values(JOV).mat")
 
 overallOfBothSessions<- FLE$FLE.Overall
 overallOfBothSessions<- as_tibble(overallOfBothSessions)
