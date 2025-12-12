@@ -186,7 +186,10 @@ EJNonlyParticipants <- EJNonlyParticipants %>%
   drop_na(FLE)
 ```
 
+To decide on a prior for true score population mean
+and inter-individual variance, 
 Plot histogram of EJN only Ss
+
 
 ```{r}
 
@@ -205,13 +208,3 @@ ggplot(EJNonlyParticipants, aes(x = FLE)) +
   theme_minimal()
 
 ```
-To decide on a prior for true score population mean
-and inter-individual variance, 
-```{r}
-
-sampleMean<- mean(EJNonlyParticipants$FLE)
-sampleSD<-  sd(EJNonlyParticipants$FLE)
-sampleMean
-sampleSD
-```
-
