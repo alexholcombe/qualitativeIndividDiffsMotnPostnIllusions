@@ -56,7 +56,8 @@ The data set contains three columns of interest for our analysis: rtS is the dep
 
 ```{r readData, echo=FALSE}
 
-FLE<- readMat("FLE_Values(JOV).mat")
+FLE<- readMat("FLE_Values(JOV).mat") # https://osf.io/s4aqg https://osf.io/s4aqg/files/am9bu
+
 
 overallOfBothSessions<- FLE$FLE.Overall
 overallOfBothSessions<- as_tibble(overallOfBothSessions)
@@ -211,8 +212,13 @@ ggplot(EJNonlyParticipants, aes(x = FLE)) +
   theme_minimal()
 
 ```
+## FGE
 
-To-Do:
+FGE<- readMat("FG_Values(JOV).mat") # https://osf.io/s4aqg/files/8kvsm
+
+
+
+## To-Do:
 
 Once we get the staircase-level data (I think there are multiple staircases per session), we can have multiple observations per session and run the whole test on the second session . Because we noticed that the illusion tends to be smaller in the second session, presumably because of practice with the task helping the temporal binding/sampling. But there isn't a big reason to do that.
 
