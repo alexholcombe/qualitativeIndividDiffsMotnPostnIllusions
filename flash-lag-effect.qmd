@@ -5,12 +5,17 @@ format: html
 
 ```{r}
 #| label: setup
+#| include: false
+
+library("dplyr")
+library("ggplot2")
+
+library("lme4")
+library("lmerTest")
 
 library("rstan")
 library("tidybayes")
 library("logspline")
-library("lme4")
-library("lmerTest")
 ```
 
 ```{r}
@@ -18,6 +23,9 @@ library("lmerTest")
 
 fle_data <- read.csv("./myOverallJoV_readyForQualitativeTest.csv")
 ```
+
+For this analysis, we need multiple observations per participant to partition the observed variance in degrees of visual angle (`dva`) into true individual differences $\sigma_\theta$ and error variance $\sigma_\epsilon$, i.e. variance between observations within a participant.
+Hence, we collapse the data across the two sessions and estimate an overall mean (`(Intercept)`, $\mu_\theta$) and individual differences around this mean for each participant (random effect `ID`, $\sigma_\theta$).
 
 ```{r}
 #| label: fit-lme-model
@@ -27,30 +35,85 @@ fle_lmer <- lmer(dva ~ 1 + (1 | ID), data = fle_data)
 summary(fle_lmer)
 ```
 
+Based on the assumption of a normal distribution of individual differences $\theta_i \sim \mathcal{N}(\mu_\theta, \sigma_\theta)$, we can compute the proportion of participants with truely negative effects $p(\theta_i<0)$ as follows:
+
+$$
+p(\theta_i<0) = \Phi\left(\frac{- \mu_\theta}{\sigma_\theta}\right)
+$$
+
+```{r}
+#| label: lme-proportion-negative
+
+mle_p_negative <- pnorm(
+  q = 0
+  , mean = fixef(fle_lmer)[1]
+  , sd = attr(VarCorr(fle_lmer)$ID, "stddev")
+)
+
+mle_p_negative
+```
+
+To test whether this proportion is credibly greater than zero, we will fit a Bayesian hierarchical model next.
+
 # Bayesian Hierarchical Model
+
+Following the standard hierarchical model structure for individual differences, we define the following model:
+
+$$
+\begin{aligned}
+y_{ij} & \sim \mathcal{N}(\theta_i, \sigma_\epsilon) \\
+\theta_i & \sim \mathcal{N}(\mu_\theta, \sigma_\theta) \\ \\
+\mu_\theta & \sim \log \mathcal{N}(a_\mu, b_\mu) \\ \\
+\sigma_\theta & = -\mu_\theta / \Phi^{-1}(0.5 \; p(\theta_i<0)) \\
+p(\theta_i<0) & = \Phi(p^{*}_{\theta_i<0}) \\
+p^{*}(\theta_i<0) & \sim \mathcal{N}(a_p, b_p) \\ \\
+\sigma_\epsilon^2 & \propto 1/\sigma_\epsilon^2
+\end{aligned}
+$$
+
+We place a log-normal prior on the group mean $\mu_\theta$ to ensure positive values (but we could replace this by something more flexible).
+We parameterize the individual differences standard deviation $\sigma_\theta$ in terms of the proportion of individuals that show a negative flash lag effect (i.e., a flash *lead* effect) $p(\theta_i<0)$ to directly estimate this quantity of interest.
+To improve sampling efficiency, we place a normal prior on the probit-transformed quantity $p^{*}(\theta_i<0)$.
+Finally, we place a non-informative prior on the error variance $\sigma_\epsilon^2$.
+
 
 ## Prior distributions
 
 ```{r}
 #| label: plot-prior-pse
 
-rnorm(1e5, mean = -0.5, sd = 0.5) |>
+rnorm(1e5, mean = -2/3, sd = 2/3) |>
   pnorm(0) |>
   (\(x) x / 2)() |>
-  hist(
-    breaks = 50
-    , main = "Prior Distribution for PSE"
-    , xlab = "PSE"
-    , col = "lightblue"
-    , border = "black"
-  )
+  logspline::logspline(lbound = 0, ubound = 0.5) |>
+  (
+    \(fit) {
+      curve(
+        logspline::dlogspline(x, fit)
+        , from = 0, to = 0.5
+        , col = "blue", lwd = 2
+        , xlab = expression(p[theta < 0])
+        , ylab = "Density"
+        , las = 1
+        , n = 1001
+      )
+    }
+  )()
+  
 
 curve(
-  dlnorm(x, meanlog = 1, sdlog = 1)
+  dlnorm(x, meanlog = 0.5, sdlog = 1)
   , from = 0, to = 5
   , col = "red", lwd = 2
+  , xlab = expression(mu[theta])
+  , ylab = "Density"
+  , las = 1
+  , n = 1001
 )
 ```
+
+
+## Model estimation
 
 ```{r}
 #| label: fit-bayesian-model
@@ -61,14 +124,14 @@ pse_model <- readLines("./models/pse-unconstrained.stan") |>
 fle_stan_data <- list(
   N = nrow(fle_data) |> as.integer()
   , n_subjects = length(unique(fle_data$ID)) |> as.integer()
-  , id = as.numeric(as.factor(fle_data$ID))
+  , id = as.integer(as.factor(fle_data$ID))
   , y = fle_data$dva
 
   # Prior settings
-  , mu_theta_mean = 1
+  , pi_mean = -2/3
+  , pi_sd = 2/3
+  , mu_theta_mean = 0.5
   , mu_theta_sd = 1
-  , pi_mean = -0.5
-  , pi_sd = 0.5
 )
 
 fle_bayes <- rstan::stan(
@@ -82,8 +145,12 @@ fle_bayes <- rstan::stan(
 )
 ```
 
+@tbl-compare-estimates shows the close agreement between the posterior means of the parameter estimates to the point estimates from the (restricted) maximum likelihood estimation via `lmer()`.
+
+
 ```{r}
-#| label: print-estimates
+#| label: tbl-compare-estimates
+#| tbl-cap: "Comparison of Bayesian posterior means and MLE estimates."
 
 data.frame(
   parameter = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")
@@ -96,7 +163,7 @@ data.frame(
     fixef(fle_lmer)[1],
     attr(VarCorr(fle_lmer)$ID, "stddev"),
     sigma(fle_lmer),
-    NA  # p_negative_theta is not estimated in the frequentist model
+    mle_p_negative
   )
 ) |>
   knitr::kable()
@@ -107,36 +174,118 @@ data.frame(
 
 fle_bayes |>
   summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")) |>
-  (\(x) x$summary)()
+  (\(x) x$summary)() |>
+  tidyr::as_tibble(rownames = "parameter") |>
+  dplyr::mutate(
+    parameter = gsub("mu", "$\\\\mu", parameter) |>
+      gsub("sigma", "$\\\\sigma", x = _) |>
+      gsub("_(.+)", "_{\\\\\\1}$", x = _) |>
+      gsub("^p.+", "$p(\\\\theta_i<0)$", x = _)
+  ) |>
+  knitr::kable(digits = 3)
 ```
 
 ```{r}
-#| label: bayes-factor
+#| label: fig-posterior-distributions
+#| fig-cap: "Posterior distributions for the group mean of individual differences $\\mu_{\\theta}$, the standard deviation of individual differences $\\sigma_{\\theta}$, and the proportion of participants with a negative flash lag effect $p(\\theta_i<0)$."
+
+(tidybayes::gather_draws(
+  fle_bayes
+  , mu_theta, sigma_theta, p_negative_theta
+) |>
+  dplyr::mutate(
+    .variable = factor(
+      .variable
+      , levels = c("mu_theta", "sigma_theta", "p_negative_theta")
+      , labels = c("mu[theta]", "sigma[theta]", "p(theta[i] < 0)")
+    )
+  ) |>
+  ggplot() +
+  aes(x = .value, fill = after_stat(level)) +
+  stat_halfeye(fill_type = "segments", normalize = "panels", .width = c(.5, .8, .95, .99, 1), slab_color = "black", alpha = 0.7, fatten_point = 2, interval_size_range = c(1, 2)) +
+  annotate("point", x = c(0, 0.5), y = 0, color = "white") + 
+  scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1) +
+  guides(
+    fill = guide_legend(
+      title = "Credible level"
+      , override.aes = list(color = NA)
+      , reverse = TRUE
+      , direction = "horizontal"
+      , title.position = "top"
+      , title.hjust = 0.5
+    )
+  ) +
+  coord_cartesian(ylim = c(-0.05, NA)) +
+  facet_wrap(
+    ~ .variable
+    , scales = "free"
+    , labeller = label_parsed
+    , ncol = 2
+  ) +
+  labs(x = "Parameter value") +
+  papaja::theme_apa(base_size = 16) +
+  theme(
+    axis.line.y = element_blank()
+    , axis.ticks.y = element_blank()
+    , axis.text.y = element_blank()
+    , axis.title.y = element_blank()
+    # , legend.title.position = "top"
+  )) |>
+  lemon::reposition_legend("center", panel = 'panel-2-2')
+```
+
+```{r}
+#| label: fig-bayes-factor
+#| fig-cap: "Posterior and prior density for the proportion of participants with a negative flash lag effect, $p(\\theta_i<0)$. The Bayes factor in favor of the alternative hypothesis ($p(\\theta_i<0) > 0$) over the null hypothesis ($p(\\theta_i<0) = 0$) is given by the ratio of the prior density to the posterior density at $p(\\theta_i<0) = 0$."
 
 # Extract posterior samples for p_negative_theta
-
 p_negative_draws <- tidybayes::gather_draws(fle_bayes, p_negative_theta)
 
-p_negative_draws_ls <- logspline::logspline(p_negative_draws$.value, lbound = 0, ubound = 0.5)
+# logspline approximation of posterior density
+p_negative_draws_ls <- logspline::logspline(
+  p_negative_draws$.value
+  , lbound = 0, ubound = 0.5
+)
+
+# logspline approximation of prior density
+prior_ls <- rnorm(1e6, mean = fle_stan_data$pi_mean, sd = fle_stan_data$pi_sd) |>
+  pnorm() |>
+  (\(x) x / 2)() |>
+  logspline::logspline(lbound = 0, ubound = 0.5)
+
+prior_density <- logspline::dlogspline(0, prior_ls)
+posterior_density <- logspline::dlogspline(0, p_negative_draws_ls)
+
 
 curve(
   logspline::dlogspline(x, p_negative_draws_ls)
   , from = 0, to = 0.5
-  , col = "blue", lwd = 2
+  , col = "black", lwd = 3
   , main = "Posterior Density of P(p_negative_theta)"
   , xlab = "p_negative_theta"
   , n = 1001
 )
 
+curve(
+  logspline::dlogspline(x, prior_ls)
+  , from = 0, to = 0.5
+  , col = "grey", lwd = 3
+  , add = TRUE
+  , n = 1001
+)
 
-posterior_density <- logspline::dlogspline(0, p_negative_draws_ls)
+points(
+  x = c(0, 0)
+  , y = c(prior_density, posterior_density)
+  , col = c("white", "white")
+  , bg = c("grey", "black")
+  , pch = 21
+  , cex = 2
+)
+```
 
-
-prior_density <- rnorm(1e5, mean = fle_stan_data$pi_mean, sd = fle_stan_data$pi_sd) |>
-  pnorm() |>
-  (\(x) x / 2)() |>
-  logspline::logspline(lbound = 0, ubound = 0.5) |>
-  logspline::dlogspline(0, fit = _)
+```{r}
+#| label: bayes-factor-calculation
 
 bayes_factor_10 <- prior_density / posterior_density
 bayes_factor_10
