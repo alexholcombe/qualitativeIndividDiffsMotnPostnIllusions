@@ -1,0 +1,143 @@
+---
+title: "Inidividual Differences Investigation for Flash Lag Effect"
+format: html
+---
+
+```{r}
+#| label: setup
+
+library("rstan")
+library("tidybayes")
+library("logspline")
+library("lme4")
+library("lmerTest")
+```
+
+```{r}
+#| label: load-data
+
+fle_data <- read.csv("./myOverallJoV_readyForQualitativeTest.csv")
+```
+
+```{r}
+#| label: fit-lme-model
+
+fle_lmer <- lmer(dva ~ 1 + (1 | ID), data = fle_data)
+
+summary(fle_lmer)
+```
+
+# Bayesian Hierarchical Model
+
+## Prior distributions
+
+```{r}
+#| label: plot-prior-pse
+
+rnorm(1e5, mean = -0.5, sd = 0.5) |>
+  pnorm(0) |>
+  (\(x) x / 2)() |>
+  hist(
+    breaks = 50
+    , main = "Prior Distribution for PSE"
+    , xlab = "PSE"
+    , col = "lightblue"
+    , border = "black"
+  )
+
+curve(
+  dlnorm(x, meanlog = 1, sdlog = 1)
+  , from = 0, to = 5
+  , col = "red", lwd = 2
+)
+```
+
+```{r}
+#| label: fit-bayesian-model
+
+pse_model <- readLines("./models/pse-unconstrained.stan") |>
+  paste(collapse = "\n")
+
+fle_stan_data <- list(
+  N = nrow(fle_data) |> as.integer()
+  , n_subjects = length(unique(fle_data$ID)) |> as.integer()
+  , id = as.numeric(as.factor(fle_data$ID))
+  , y = fle_data$dva
+
+  # Prior settings
+  , mu_theta_mean = 1
+  , mu_theta_sd = 1
+  , pi_mean = -0.5
+  , pi_sd = 0.5
+)
+
+fle_bayes <- rstan::stan(
+  model_code = pse_model
+  , data = fle_stan_data
+  , iter = 1e5/4 + 1000
+  , warmup = 1000
+  , chains = 4
+  , cores = 4
+  , seed = 123
+)
+```
+
+```{r}
+#| label: print-estimates
+
+data.frame(
+  parameter = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")
+  , bayes = fle_bayes |>
+    summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+    dplyr::pull("mean")
+  , mle = c(
+    fixef(fle_lmer)[1],
+    attr(VarCorr(fle_lmer)$ID, "stddev"),
+    sigma(fle_lmer),
+    NA  # p_negative_theta is not estimated in the frequentist model
+  )
+) |>
+  knitr::kable()
+```
+
+```{r}
+#| label: bayesian-model-summary
+
+fle_bayes |>
+  summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta")) |>
+  (\(x) x$summary)()
+```
+
+```{r}
+#| label: bayes-factor
+
+# Extract posterior samples for p_negative_theta
+
+p_negative_draws <- tidybayes::gather_draws(fle_bayes, p_negative_theta)
+
+p_negative_draws_ls <- logspline::logspline(p_negative_draws$.value, lbound = 0, ubound = 0.5)
+
+curve(
+  logspline::dlogspline(x, p_negative_draws_ls)
+  , from = 0, to = 0.5
+  , col = "blue", lwd = 2
+  , main = "Posterior Density of P(p_negative_theta)"
+  , xlab = "p_negative_theta"
+  , n = 1001
+)
+
+
+posterior_density <- logspline::dlogspline(0, p_negative_draws_ls)
+
+
+prior_density <- rnorm(1e5, mean = fle_stan_data$pi_mean, sd = fle_stan_data$pi_sd) |>
+  pnorm() |>
+  (\(x) x / 2)() |>
+  logspline::logspline(lbound = 0, ubound = 0.5) |>
+  logspline::dlogspline(0, fit = _)
+
+bayes_factor_10 <- prior_density / posterior_density
+bayes_factor_10
+```
