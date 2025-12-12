@@ -175,14 +175,43 @@ File is: single_sess.csv
 ```{r}
 #Participants who weren't also in JOV dataset 
 EJNonlyParticipants <- read_csv("Single_Sess(EJN2025).csv")
+
+na_count <- sum(is.na(EJNonlyParticipants$FLE))
+cat("Number of NAs in FLE:", na_count, "\n")
+
+print("Tim: I think the nans are because their staircases did not converge and we excluded them")
+print("But i think this is where reanalysing the data later on, we could be more liberal maybe? Alex: I think we should do both")
+
+EJNonlyParticipants <- EJNonlyParticipants %>%
+  drop_na(FLE)
 ```
 
 Plot histogram of EJN only Ss
 
 ```{r}
-ggplot(EJNonlyParticipants, aes(x=FLE)) + geom_histogram() +
-  #facet_grid(rows=vars(session)) +
-  xlab('FLE size (dva)') +
-  ggtitle('EJN2025-specific participants FLE') 
+
+mean_val <- mean(EJNonlyParticipants$FLE)
+sd_val <- sd(EJNonlyParticipants$FLE)
+
+# Create histogram with text
+ggplot(EJNonlyParticipants, aes(x = FLE)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black") +
+  annotate("text", x = Inf, y = Inf, 
+           label = paste0("Mean = ", round(mean_val, 2), "\n",
+                         "SD = ", round(sd_val, 2), "\n",
+                         "σ^2 = ", round(sd_val*sd_val, 2)),
+           hjust = 1.1, vjust = 1.1, size = 5) +
+  labs(title = "EJN2025-specific participants FLE", x = "FLE (dva)", y = "Count") +
+  theme_minimal()
 
 ```
+To decide on a prior for true score population mean
+and inter-individual variance, 
+```{r}
+
+sampleMean<- mean(EJNonlyParticipants$FLE)
+sampleSD<-  sd(EJNonlyParticipants$FLE)
+sampleMean
+sampleSD
+```
+
