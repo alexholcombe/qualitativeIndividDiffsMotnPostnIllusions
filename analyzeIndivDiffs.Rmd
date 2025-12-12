@@ -39,12 +39,12 @@ The data set contains three columns of interest for our analysis: rtS is the dep
 
 data(stroop)
 
-resStroop <- constraintBF(formula = rtS ~ ID + cond + ID:cond,
-                          data = stroop,
-                          whichRandom = "ID",
-                          ID = "ID",
-                          whichConstraint = c("cond" = "2 > 1"),
-                          rscaleEffects = c("ID" = 1, "cond" = 1/6, "ID:cond" = 1/10))
+#resStroop <- constraintBF(formula = rtS ~ ID + cond + ID:cond,
+#                          data = stroop,
+#                          whichRandom = "ID",
+#                          ID = "ID",
+#                          whichConstraint = c("cond" = "2 > 1"),
+#                          rscaleEffects = c("ID" = 1, "cond" = 1/6, "ID:cond" = 1/10))
 
 ```
 
@@ -64,10 +64,9 @@ overallOfBothSessions<- as_tibble(overallOfBothSessions)
 sess1JoV<-  as_tibble(FLE$FLE.Sess1)
 sess2JoV<-  as_tibble(FLE$FLE.Sess2)
 
-#European Journal of Neuroscience 2025 paper
-#Cottier_et_al_2023_Data(EJN).csv
-
 ```
+
+
 
 Give data better column names
 
@@ -91,6 +90,12 @@ sess2JoV <- sess2JoV %>%
 
 
 ```
+
+
+
+
+
+
 
 Need to re-arrange the data so that session number is a column (make session long rather than wide)
 
@@ -129,11 +134,55 @@ wide <- myOverallJoV %>%
     names_prefix = "dva_"
   )
 
-ggplot(wide, aes(x = dva_1, y = dva_2)) +
+s1s2scatter<- ggplot(wide, aes(x = dva_1, y = dva_2)) +
   geom_point() +
   labs(
     x = "Session 1 dva",
     y = "Session 2 dva"
-  )
+  ) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("JoV FLE")
+  #geom_abline() #reveals reduction from S1 to S2, consitent with practice triggering faster sampling of position
+  
+
+show(s1s2scatter)
+```
+
+```{r }
+#install.packages('ggExtra')
+library(ggExtra)
+
+ggMarginal(s1s2scatter, type = "histogram")
+    
+```
+
+
+#European Journal of Neuroscience 2025 paper
+
+This pic includes participants that were also in JoV
+
+```{r, out.width="80%", fig.align="center", fig.cap="My caption"}
+knitr::include_graphics("EJN2025_FLE_histogram.png")
+```
+
+Load
+EJN-specific participants, from https://osf.io/jxeu3
+
+Link: https://osf.io/jxeu3/files/2x8pg 
+File is: single_sess.csv 
+
+```{r}
+#Participants who weren't also in JOV dataset 
+EJNonlyParticipants <- read_csv("Single_Sess(EJN2025).csv")
+```
+
+Plot histogram of EJN only Ss
+
+```{r}
+ggplot(EJNonlyParticipants, aes(x=FLE)) + geom_histogram() +
+  #facet_grid(rows=vars(session)) +
+  xlab('FLE size (dva)') +
+  ggtitle('EJN2025-specific participants FLE') 
 
 ```
