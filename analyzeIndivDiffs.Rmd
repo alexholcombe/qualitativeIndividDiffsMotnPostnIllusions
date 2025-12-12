@@ -14,7 +14,7 @@ Can’t test against a constant in quid .
 
 Easiest thing:
 
-Compare unconstrainted model to the dominance model , which is that each individual has a positive.
+Compare unconstrained model to the model that each individual has a positive true score.
 
 But to do that, still can't use their library because it's set up for two conditions.
 
@@ -211,3 +211,7 @@ ggplot(EJNonlyParticipants, aes(x = FLE)) +
   theme_minimal()
 
 ```
+
+Once we get the staircase-level data (I think there are multiple staircases per session), we can have multiple observations per session and run the whole test on the second session . Because we noticed that the illusion tends to be smaller in the second session, presumably because of practice with the task helping the temporal binding/sampling.
+
+
