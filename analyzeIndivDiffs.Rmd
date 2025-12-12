@@ -106,6 +106,9 @@ sess1JoV$session <- 1
 sess2JoV$session <- 2
 
 myOverallJoV<- rbind(sess1JoV, sess2JoV)
+
+write_csv(myOverallJoV, "myOverallJoV_readyForQualitativeTest.csv")
+
 ```
 
 
@@ -116,7 +119,7 @@ library(ggplot2)
 ggplot(myOverallJoV, aes(x=dva)) + geom_histogram() +
   facet_grid(rows=vars(session)) +
   xlab('FLE size (dva)') +
-  ggtitle('JoV2022 FLE') 
+  ggtitle('JoV2023 FLE') 
 
 # ggplot(overallOfBothSessions, aes(x=)) + geom_histogram() +
 #   xlab('FLE size (dva)') +
