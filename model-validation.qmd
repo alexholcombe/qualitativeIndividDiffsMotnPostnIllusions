@@ -62,18 +62,32 @@ lmer_fit <- lmer(y ~ 1 + (1 | id), data = sim_data)
 ```
 
 ```{r}
+#| label: lme-proportion-negative
+
+mle_p_negative <- pnorm(
+  q = 0
+  , mean = fixef(lmer_fit)[1]
+  , sd = attr(VarCorr(lmer_fit)$id, "stddev")
+)
+
+mle_p_negative
+```
+
+```{r}
 #| label: plot-priors
 
-rnorm(1e5, mean = -0.5, sd = 0.5) |>
+p_negative <- rnorm(1e5, mean = -2/3, sd = 2/3) |>
   pnorm(0) |>
-  (\(x) x / 2)() |>
-  hist(
-    breaks = 50
-    , main = "Prior Distribution for PSE"
-    , xlab = "PSE"
-    , col = "lightblue"
-    , border = "black"
-  )
+  (\(x) x / 2)()
+
+hist(
+  p_negative
+  , breaks = 50
+  , main = "Prior Distribution for PSE"
+  , xlab = "PSE"
+  , col = "lightblue"
+  , border = "black"
+)
 
 curve(
   dlnorm(x, meanlog = 1, sdlog = 1)
@@ -81,6 +95,22 @@ curve(
   , col = "red", lwd = 2
 )
 
+mu <- rlnorm(1e5, meanlog = 1, sdlog = 1)
+sigma <- -mu / qnorm(p_negative)
+
+data.frame(mu = mu, sigma = sigma, p_negative = p_negative) |>
+  ggplot() +
+    aes(x = mu, y = sigma, color = p_negative) +
+    geom_point(alpha = 0.1) +
+    stat_density_2d(color = "white") +
+    labs(
+      x = expression(mu[theta])
+      , y = expression(sigma[theta])
+      , color = expression(p(theta < 0))
+    ) +
+    scale_color_viridis_c(option = "C") +
+    lims(x = c(0, 5), y = c(0, 5)) +
+    papaja::theme_apa(base_size = 16)
 ```
 
 ```{r}
@@ -154,7 +184,7 @@ data.frame(
     fixef(lmer_fit)[1],
     attr(VarCorr(lmer_fit)$id, "stddev"),
     sigma(lmer_fit),
-    NA  # p_negative_theta is not estimated in the frequentist model
+    mle_p_negative
   )
 ) |>
   knitr::kable()
