@@ -1,1 +1,9 @@
-.Rproj.user
+.DS_Store
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# R session files
+.Rhistory
+.RData
+.Ruserdata

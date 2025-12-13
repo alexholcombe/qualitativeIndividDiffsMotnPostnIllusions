@@ -1,0 +1,121 @@
+---
+title: "Load published illusion data"
+output: html_document
+date: "2025-12-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r }
+#install.packages("R.matlab")
+library(R.matlab)
+library(tidyverse)
+library(here)
+
+
+```
+
+## Load Cottier et al. data downloaded from OSF
+
+Show available files
+
+```{r readData, echo=FALSE}
+
+# https://osf.io/s4aqg https://osf.io/s4aqg/files/am9bu
+datadir <- here("publishedMotnPostnDataToLoad","osfstorageForCottierEtAl2023","Data","Effect files")
+list.files(datadir)
+
+```
+
+```{r readData, echo=FALSE}
+
+mat_files <- list.files(
+  datadir,
+  pattern = "\\.mat$",
+  full.names = TRUE
+)
+
+for (f in mat_files) {
+  cat("\nFile:", basename(f), "\n")
+  
+  mat <- readMat(f)
+  
+  # component names delimited by $
+  cat(paste(names(mat), collapse = " $ "), "\n")
+}
+
+```
+
+Load FDE
+
+```{r readData, echo=FALSE}
+
+FDE <- readMat(
+  file.path(datadir, "FD_Values.mat")
+)
+
+FDE$FD.PSE.Effect.Sess1
+
+FDE$FD.PSE.Effect.Sess2
+
+
+
+```
+
+
+Load FLE
+```{r ,echo=F}
+FLE <- readMat(
+  file.path(datadir, "FLE_Values.mat")
+)
+
+overallOfBothSessions<- FLE$FLE.Overall
+overallOfBothSessions<- as_tibble(overallOfBothSessions)
+
+sess1JoV<-  as_tibble(FLE$FLE.Sess1)
+sess2JoV<-  as_tibble(FLE$FLE.Sess2)
+
+```
+
+Give data better column names
+
+Each has three columns: participant number, Column 2 is pixels column 3 is dva
+
+```{r , echo=FALSE}
+
+sess1JoV <- sess1JoV %>%
+  rename(
+    ID     = V1,
+    pixels = V2,
+    dva    = V3
+  )
+
+sess2JoV <- sess2JoV %>%
+  rename(
+    ID     = V1,
+    pixels = V2,
+    dva    = V3
+  )
+
+
+```
+
+
+
+## To-Do:
+
+Once we get the staircase-level data (I think there are multiple staircases per session), we can have multiple observations per session and run the whole test on the second session . Because we noticed that the illusion tends to be smaller in the second session, presumably because of practice with the task helping the temporal binding/sampling. But there isn't a big reason to do that.
+
+- Get the data for the other illusions and run the model on each of them
+
+- Analyse the effect of session and test the hypotehsis that the FLE is smaller for certain illusions with more temporal component such as FLE 
+
+- Sanity-check by doing my biasing dummy-coding hack to get the quid library to work with this one-condition data
+
+
+
+
+
