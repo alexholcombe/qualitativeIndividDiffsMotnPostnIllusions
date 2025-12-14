@@ -30,6 +30,8 @@ list.files(datadir)
 
 ```
 
+Show the component fields of each MATLAB file from Cottier et al. 2023
+
 ```{r readData, echo=FALSE}
 
 mat_files <- list.files(
@@ -48,6 +50,76 @@ for (f in mat_files) {
 }
 
 ```
+
+Get the individual session files
+
+```{r readData, echo=FALSE}
+
+mat_files <- list.files(
+  datadir,
+  pattern = "\\.mat$",
+  full.names = TRUE
+)
+
+extract_sessions <- function(matfile) {
+  mat <- readMat(matfile)
+  nms <- names(mat)
+  
+  sess_vars <- nms[
+    str_detect(nms, "(Sess1|Sess2|S1|S2)$")
+  ]
+  
+  tibble(
+    file = basename(matfile),
+    variable = sess_vars,
+    data = map(sess_vars, ~ mat[[.x]])
+  )
+}
+
+session_data <- map_dfr(mat_files, extract_sessions)
+
+head(session_data)
+```
+Combine all illusions listed in session_data into one big tibble
+
+```{r}
+
+all_illusions <- session_data %>%
+  mutate(
+    illusion = str_extract(file, "^[^_]+"),
+    session = case_when(
+      str_ends(variable, "Sess1") | str_ends(variable, "S1") ~ 1,
+      str_ends(variable, "Sess2") | str_ends(variable, "S2") ~ 2
+    )
+  ) %>%
+  select(illusion, session, data) %>%
+  mutate(
+    participant = map(data, ~ .x[, 1]),
+    value       = map(data, ~ .x[, 2])
+  ) %>%
+  select(-data) %>%
+  unnest(c(participant, value)) %>%
+  relocate(illusion, participant, session)
+
+
+```
+
+Confirm it worked by recreating Figure 2 of Cottier et al. 2023, the scatterplot of each illusion.
+
+```{r}
+
+
+```
+
+MIPS "participants used the keyboard to adjust the horizontal position of the two pairs of Gabors such that they were vertically aligned. Participants completed 60 trials, comprising 20 trials for each of the three different starting offsets."
+
+FLE: 4 staircases
+LUM-FLE: 4 staircases, "Participants used the keyboard to report which of the two circles was darker at the moment of the flash"
+Frohlich (FE): 4? staircases, "Participants used the keyboard to indicate whether the rod was pointing to the left or right of vertical at its onset"
+FD: staircaes, "Participants used a keyboard to report which flash was higher."
+TG: staircases
+FJ: Method of adjustment, Participants completed 51 randomly presented experimental trials, of which the first 3 were practice trials, and 3 were attention checks that occurred every 15 trials.
+FG: "participants used the mouse to report the perceived location of the red target on the annulus. When participants did not see the target, they reported this by clicking on the fixation point."
 
 Load FDE
 
