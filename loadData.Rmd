@@ -46,7 +46,7 @@ for (f in mat_files) {
   mat <- readMat(f)
   
   # component names delimited by $
-  cat(paste(names(mat), collapse = " $ "), "\n")
+  cat("components:",paste(names(mat), collapse = " $ "), "\n")
 }
 
 ```
@@ -78,8 +78,23 @@ extract_sessions <- function(matfile) {
 
 session_data <- map_dfr(mat_files, extract_sessions)
 
-head(session_data)
+session_data
 ```
+
+TG has both Effects.Sess1 and PSE.Effect.Sess1, why is that?
+For now, assume we want PSE, so delete Effects.Sess1 and Effects.Sess2.
+
+```{r readData, echo=FALSE}
+
+session_data <- session_data %>%
+  filter(
+    !(file == "TG_Values.mat" &
+        str_detect(variable, "Effects\\.Sess[12]$"))
+  )
+
+```
+
+
 Combine all illusions listed in session_data into one big tibble
 
 ```{r}
@@ -104,12 +119,85 @@ all_illusions <- session_data %>%
 
 ```
 
+Check for missing values.
+```{r}
+na_by_participant <- all_illusions %>%
+  group_by(illusion, participant) %>%
+  summarise(
+    sess1_na = any(session == 1 & is.na(value)),
+    sess2_na = any(session == 2 & is.na(value)),
+    .groups = "drop"
+  )
+
+na_by_participant %>%
+  filter(sess1_na | sess2_na)
+
+```
+Participant 33 has missing values for FDE for both session 1 and session 2,
+and for Frohlich participant 34 has missing values for both, while 21 and 61 have missing values for just one session.
+
+Remove those participants.
+```{r}
+# identify bad participants
+bad_participants <- all_illusions %>%
+  group_by(illusion, participant) %>%
+  summarise(
+    sess1_na = any(session == 1 & is.na(value)),
+    sess2_na = any(session == 2 & is.na(value)),
+    .groups = "drop"
+  ) %>%
+  filter(sess1_na | sess2_na) %>%
+  select(illusion, participant)
+
+# remove them from the data
+all_illusions_clean <- all_illusions %>%
+  anti_join(
+    bad_participants,
+    by = c("illusion", "participant")
+  )
+
+```
+
 Confirm it worked by recreating Figure 2 of Cottier et al. 2023, the scatterplot of each illusion.
 
 ```{r}
+wide_illusions <- all_illusions_clean %>%
+  select(illusion, participant, session, value) %>%
+  pivot_wider(
+    names_from  = session,
+    values_from = value,
+    names_prefix = "sess"
+  )
 
+ggplot(wide_illusions, aes(x = sess1, y = sess2)) +
+  geom_point() +
+  facet_wrap(~ illusion, scales = "free") +
+  labs(
+    x = "Session 1 value",
+    y = "Session 2 value"
+  ) +
+  # identity line
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  # zero reference lines
+  geom_vline(xintercept = 0, linetype = "dotdash") +
+  geom_hline(yintercept = 0, linetype = "dotdash") +
+  theme_bw()
 
 ```
+
+Investigate outliers which don't show up in Figure 2 of published paper.
+
+```{r}
+
+frohlich_outliers <- all_illusions_clean %>%
+  filter(illusion == "Frohlich") %>%
+  group_by(participant) %>%
+  filter(any(value < -20, na.rm = TRUE)) %>%
+  arrange(participant, session)
+
+frohlich_outliers
+```
+
 
 MIPS "participants used the keyboard to adjust the horizontal position of the two pairs of Gabors such that they were vertically aligned. Participants completed 60 trials, comprising 20 trials for each of the three different starting offsets."
 
