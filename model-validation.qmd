@@ -9,7 +9,6 @@ author:
     email: frederik.aust@uni-koeln.de
     affiliations:
       - ref: uoc
-      - ref: uva
 
 affiliations:
   - id: uoc
@@ -23,7 +22,7 @@ highlight-style: github
 reference-location: margin
 
 html:
-  standalone: true
+  # standalone: true
   embed-resources: true
   self-contained: true
   link-external-icon: true

@@ -9,7 +9,6 @@ author:
     email: frederik.aust@uni-koeln.de
     affiliations:
       - ref: uoc
-      - ref: uva
   - name: Alex Holcombe
     orcid: 0000-0003-2869-0085
     affiliations:
@@ -60,7 +59,7 @@ library("bridgesampling")
 ```{r}
 #| label: load-data
 
-fle_data <- read.csv("./myOverallJoV_readyForQualitativeTest.csv")
+fle_data <- read.csv("./publishedMotnPostnDataToLoad/myOverallJoV_readyForQualitativeTest.csv")
 ```
 
 For this analysis, we need multiple observations per participant to partition the observed variance in degrees of visual angle (`dva`) into true individual differences $\sigma_\theta$ and error variance $\sigma_\epsilon$, i.e. variance between observations within a participant.
@@ -133,7 +132,7 @@ p_negative_prior |>
         logspline::dlogspline(x, fit)
         , from = 0, to = 0.5
         , lwd = 2
-        , xlab = expression(p[theta < 0])
+        , xlab = expression(p[theta[i] < 0])
         , ylab = "Density"
         , las = 1
         , n = 1001
@@ -181,7 +180,7 @@ unconstrained_joint_prior <- data.frame(mu = mu_prior, sigma = sigma_prior, p_ne
     labs(
       x = expression(mu[theta])
       , y = expression(sigma[theta])
-      , color = expression(p(theta < 0))
+      , color = expression(p(theta[i] < 0))
     ) +
     scale_color_viridis_c(option = "C", limits = c(0, 0.5)) +
     lims(x = c(0, 5), y = c(0, 5)) +
@@ -399,7 +398,7 @@ p_negative_prior |>
         logspline::dlogspline(x, fit)
         , from = 0, to = 0.5
         , col = "blue", lwd = 2
-        , xlab = expression(p[theta < 0])
+        , xlab = expression(p[theta[i] < 0])
         , ylab = "Density"
         , las = 1
         , n = 1001
@@ -463,7 +462,7 @@ dominance_joint_prior <- data.frame(mu = mu_prior, sigma = sigma_prior, p_negati
     labs(
       x = expression(mu[theta])
       , y = expression(sigma[theta])
-      , color = expression(p(theta < 0))
+      , color = expression(p(theta[i] < 0))
     ) +
     scale_color_viridis_c(option = "C", limits = c(0, 0.5)) +
     lims(x = c(0, 5), y = c(0, 5)) +
@@ -509,15 +508,15 @@ I estimate the Bayes factor using bridge sampling.
 ```{r}
 #| label: bayes-factor-approximate-dominance
 
-unconstrained_ml <- bridge_sampler(fle_bayes)
-dominance_ml <- bridge_sampler(fle_dominance_bayes)
+unconstrained_ml <- bridge_sampler(fle_bayes, method = "warp3", repetitions = 30, silent = TRUE)
+dominance_ml <- bridge_sampler(fle_dominance_bayes, method = "warp3", repetitions = 30, silent = TRUE)
 
 bayes_factor(unconstrained_ml, dominance_ml)
 ```
 
 We again find overwhelming evidence for the unconstrained population distribution.
-In other words, the assumption that noone exhibits a flash *lead* effect, seems highly implausible.
-It is likeli, however, that a comparison with a proper stricly positive population distribution would yield weaker evidence.
+In other words, the assumption that nobody exhibits a flash *lead* effect, seems highly implausible.
+It is likely, however, that a comparison with a proper stricly positive population distribution would yield weaker evidence.
 
 ## Bayes factor
 
