@@ -1,7 +1,42 @@
 ---
 title: "Inidividual Differences Investigation for Flash Lag Effect"
+date: today
+date-format: long
+
+author:
+  - name: Frederik Aust
+    orcid: 0000-0003-4900-788X
+    email: frederik.aust@uni-koeln.de
+    affiliations:
+      - ref: uoc
+      - ref: uva
+  - name: Alex Holcombe
+    orcid: 0000-0003-2869-0085
+    affiliations:
+      - ref: uos
+
+affiliations:
+  - id: uoc
+    name: University of Cologne
+    city: Cologne
+    country: Germany
+  - id: uos
+    name: University of Sydney
+    city: Sydney
+    state: Australia
+
+theme: lumen
 toc: true
-format: html
+highlight-style: github
+reference-location: margin
+
+html:
+  standalone: true
+  embed-resources: true
+  self-contained: true
+  link-external-icon: true
+  citations-hover: true
+  footnotes-hover: true
 ---
 
 ```{r}
@@ -119,6 +154,22 @@ curve(
 
 mu_prior <- rlnorm(1e5, meanlog = 0.5, sdlog = 1)
 sigma_prior <- -mu_prior / qnorm(p_negative_prior)
+
+sigma_prior |>
+  logspline::logspline(lbound = 0) |>
+  (
+    \(fit) {
+      curve(
+        logspline::dlogspline(x, fit)
+        , from = 0, to = 5
+        , lwd = 2
+        , xlab = expression(sigma[theta])
+        , ylab = "Density"
+        , las = 1
+        , n = 1001
+      )
+    }
+  )()
 
 unconstrained_joint_prior <- data.frame(mu = mu_prior, sigma = sigma_prior, p_negative = p_negative_prior) |>
   ggplot() +
@@ -376,11 +427,31 @@ p_negative_prior |>
 ```
 
 ```{r}
+#| label: implied-prior-sigma
+
+sigma_prior <- -mu_prior / qnorm(p_negative_prior)
+
+sigma_prior |>
+  logspline::logspline(lbound = 0) |>
+  (
+    \(fit) {
+      curve(
+        logspline::dlogspline(x, fit)
+        , from = 0, to = 5
+        , lwd = 2
+        , xlab = expression(sigma[theta])
+        , ylab = "Density"
+        , las = 1
+        , n = 1001
+      )
+    }
+  )()
+```
+
+```{r}
 #| label: fig-comparison-joint-priors
 #| fig-cap: "Comparison of joint priors on $\\mu_\\theta$ and $\\sigma_\\theta$ for the unconstrained (left) and the approximate strictly positive population distribution (right). The dotted line is the main diagonal, the white point marks the maximum likelihood estimates (MLE)."
 #| fig-height: 3.5
-
-sigma_prior <- -mu_prior / qnorm(p_negative_prior)
 
 dominance_joint_prior <- data.frame(mu = mu_prior, sigma = sigma_prior, p_negative = p_negative_prior) |>
   ggplot() +
