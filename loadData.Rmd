@@ -1,0 +1,281 @@
+---
+title: "Load published illusion data"
+output: html_document
+date: "2025-12-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r }
+#install.packages("R.matlab")
+library(R.matlab)
+library(tidyverse)
+library(here)
+
+
+```
+
+## Load Cottier et al. data downloaded from OSF
+
+Show available files
+
+```{r readData, echo=FALSE}
+
+# https://osf.io/s4aqg https://osf.io/s4aqg/files/am9bu
+datadir <- here("publishedMotnPostnDataToLoad","osfstorageForCottierEtAl2023","Data","Effect files")
+list.files(datadir)
+
+```
+
+Show the component fields of each MATLAB file from Cottier et al. 2023
+
+```{r readData, echo=FALSE}
+
+mat_files <- list.files(
+  datadir,
+  pattern = "\\.mat$",
+  full.names = TRUE
+)
+
+for (f in mat_files) {
+  cat("\nFile:", basename(f), "\n")
+  
+  mat <- readMat(f)
+  
+  # component names delimited by $
+  cat("components:",paste(names(mat), collapse = " $ "), "\n")
+}
+
+```
+
+Get the individual session files
+
+```{r readData, echo=FALSE}
+
+mat_files <- list.files(
+  datadir,
+  pattern = "\\.mat$",
+  full.names = TRUE
+)
+
+extract_sessions <- function(matfile) {
+  mat <- readMat(matfile)
+  nms <- names(mat)
+  
+  sess_vars <- nms[
+    str_detect(nms, "(Sess1|Sess2|S1|S2)$")
+  ]
+  
+  tibble(
+    file = basename(matfile),
+    variable = sess_vars,
+    data = map(sess_vars, ~ mat[[.x]])
+  )
+}
+
+session_data <- map_dfr(mat_files, extract_sessions)
+
+session_data
+```
+
+TG has both Effects.Sess1 and PSE.Effect.Sess1, why is that?
+For now, assume we want PSE, so delete Effects.Sess1 and Effects.Sess2.
+
+```{r readData, echo=FALSE}
+
+session_data <- session_data %>%
+  filter(
+    !(file == "TG_Values.mat" &
+        str_detect(variable, "Effects\\.Sess[12]$"))
+  )
+
+```
+
+
+Combine all illusions listed in session_data into one big tibble
+
+```{r}
+
+all_illusions <- session_data %>%
+  mutate(
+    illusion = str_extract(file, "^[^_]+"),
+    session = case_when(
+      str_ends(variable, "Sess1") | str_ends(variable, "S1") ~ 1,
+      str_ends(variable, "Sess2") | str_ends(variable, "S2") ~ 2
+    )
+  ) %>%
+  select(illusion, session, data) %>%
+  mutate(
+    participant = map(data, ~ .x[, 1]),
+    value       = map(data, ~ .x[, 2])
+  ) %>%
+  select(-data) %>%
+  unnest(c(participant, value)) %>%
+  relocate(illusion, participant, session)
+
+
+```
+
+Check for missing values.
+```{r}
+na_by_participant <- all_illusions %>%
+  group_by(illusion, participant) %>%
+  summarise(
+    sess1_na = any(session == 1 & is.na(value)),
+    sess2_na = any(session == 2 & is.na(value)),
+    .groups = "drop"
+  )
+
+na_by_participant %>%
+  filter(sess1_na | sess2_na)
+
+```
+Participant 33 has missing values for FDE for both session 1 and session 2,
+and for Frohlich participant 34 has missing values for both, while 21 and 61 have missing values for just one session.
+
+Remove those participants.
+```{r}
+# identify bad participants
+bad_participants <- all_illusions %>%
+  group_by(illusion, participant) %>%
+  summarise(
+    sess1_na = any(session == 1 & is.na(value)),
+    sess2_na = any(session == 2 & is.na(value)),
+    .groups = "drop"
+  ) %>%
+  filter(sess1_na | sess2_na) %>%
+  select(illusion, participant)
+
+# remove them from the data
+all_illusions_clean <- all_illusions %>%
+  anti_join(
+    bad_participants,
+    by = c("illusion", "participant")
+  )
+
+```
+
+Confirm it worked by recreating Figure 2 of Cottier et al. 2023, the scatterplot of each illusion.
+
+```{r}
+wide_illusions <- all_illusions_clean %>%
+  select(illusion, participant, session, value) %>%
+  pivot_wider(
+    names_from  = session,
+    values_from = value,
+    names_prefix = "sess"
+  )
+
+ggplot(wide_illusions, aes(x = sess1, y = sess2)) +
+  geom_point() +
+  facet_wrap(~ illusion, scales = "free") +
+  labs(
+    x = "Session 1 value",
+    y = "Session 2 value"
+  ) +
+  # identity line
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  # zero reference lines
+  geom_vline(xintercept = 0, linetype = "dotdash") +
+  geom_hline(yintercept = 0, linetype = "dotdash") +
+  theme_bw()
+
+```
+
+Investigate outliers which don't show up in Figure 2 of published paper.
+
+```{r}
+
+frohlich_outliers <- all_illusions_clean %>%
+  filter(illusion == "Frohlich") %>%
+  group_by(participant) %>%
+  filter(any(value < -20, na.rm = TRUE)) %>%
+  arrange(participant, session)
+
+frohlich_outliers
+```
+
+
+MIPS "participants used the keyboard to adjust the horizontal position of the two pairs of Gabors such that they were vertically aligned. Participants completed 60 trials, comprising 20 trials for each of the three different starting offsets."
+
+FLE: 4 staircases
+LUM-FLE: 4 staircases, "Participants used the keyboard to report which of the two circles was darker at the moment of the flash"
+Frohlich (FE): 4? staircases, "Participants used the keyboard to indicate whether the rod was pointing to the left or right of vertical at its onset"
+FD: staircaes, "Participants used a keyboard to report which flash was higher."
+TG: staircases
+FJ: Method of adjustment, Participants completed 51 randomly presented experimental trials, of which the first 3 were practice trials, and 3 were attention checks that occurred every 15 trials.
+FG: "participants used the mouse to report the perceived location of the red target on the annulus. When participants did not see the target, they reported this by clicking on the fixation point."
+
+Load FDE
+
+```{r readData, echo=FALSE}
+
+FDE <- readMat(
+  file.path(datadir, "FD_Values.mat")
+)
+
+FDE$FD.PSE.Effect.Sess1
+
+FDE$FD.PSE.Effect.Sess2
+
+
+
+```
+
+
+Load FLE
+```{r ,echo=F}
+FLE <- readMat(
+  file.path(datadir, "FLE_Values.mat")
+)
+
+overallOfBothSessions<- FLE$FLE.Overall
+overallOfBothSessions<- as_tibble(overallOfBothSessions)
+
+sess1JoV<-  as_tibble(FLE$FLE.Sess1)
+sess2JoV<-  as_tibble(FLE$FLE.Sess2)
+
+```
+
+Give data better column names
+
+Each has three columns: participant number, Column 2 is pixels column 3 is dva
+
+```{r , echo=FALSE}
+
+sess1JoV <- sess1JoV %>%
+  rename(
+    ID     = V1,
+    pixels = V2,
+    dva    = V3
+  )
+
+sess2JoV <- sess2JoV %>%
+  rename(
+    ID     = V1,
+    pixels = V2,
+    dva    = V3
+  )
+
+
+```
+
+
+
+## To-Do:
+
+Once we get the staircase-level data (I think there are multiple staircases per session), we can have multiple observations per session and run the whole test on the second session . Because we noticed that the illusion tends to be smaller in the second session, presumably because of practice with the task helping the temporal binding/sampling. But there isn't a big reason to do that.
+
+- Get the data for the other illusions and run the model on each of them
+
+- Analyse the effect of session and test the hypotehsis that the FLE is smaller for certain illusions with more temporal component such as FLE 
+
+- Sanity-check by doing my biasing dummy-coding hack to get the quid library to work with this one-condition data
+
+
+
+
+

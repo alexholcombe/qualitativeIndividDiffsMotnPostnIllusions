@@ -8,11 +8,7 @@ date: "2025-12-09"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 
-
-Can’t test against a constant in quid .
-
-Easiest thing:
+##  Can’t test against a constant in quid. So Frederik has to roll his own.
 
 Compare unconstrained model to the model that each individual has a positive true score.
 
@@ -31,7 +27,7 @@ library(R.matlab)
 library(quid) ##Haaf Rouder qualitative difference package
 library(tidyverse)
 ```
-## Show how it works with the built-in Stroop example, from the vignette:
+## How quid works with the built-in Stroop example, from the vignette:
 
 The data set contains three columns of interest for our analysis: rtS is the dependent variable, which is the response time in seconds; ID is the participant ID; and cond, a factor with two levels indicating the condition (1 = congruent, 2 = incongruent). This study is a repeated measures design, and all participants completed several trials in both conditions.
 
