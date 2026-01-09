@@ -41,3 +41,10 @@ Frohlich: there are 88 participants in the data file, consistent with the paper 
 
 ### Report what temporal magnitude (ms) is of each illusion
 
+### Modeling non-responders (people who have exactly zero effect)
+
+From email with Frederik 9-01-26: About the specifics of not using the Gaussian assumption, you mentioned "possibly with a spike at 0 for non-responders".  In the case of these motion and position illusions, I don't think it's as plausible as in the Stroop effect that there would be non-responders. In the case of the Stroop effect, one could be a "non-responder" for either of two reasons that I can think of. One is that they simply didn't do the task, or did it incorrectly, and no screening / outlier filtering was in place to exclude those participants. A second reason is that the participant can't read, or is such a bad reader that the reading isn't automatic ,so that their Stroop effect is zero. 
+In the case of the motion and position illusions, Tim did do some filtering of outliers, which it would be good to remind ourselves of, as that may affect exactly how we think about the possibility of zero-effect people. Another possibility is that a person could be motion-blind (analogous to not being able to read), but that is so rare that there's probably less than 8 cases in the entire neuropsychological literature, and probably almost all of them had a major brain injury.  A third possibility is that the participant cheated by holding their fingers up to the screen or something to check the location of the object. Tim, what do you reckon is the chance of that? 
+Perhaps we should assign a number to the proportion of participants that we think plausibly could be non-responders for one of these three reasons. I'm going to say that less than 8% would be like this, and I like to think that's generous.
+
+I would have thought that allowing for a spike at zero would reduce the Bayes factor to no longer favor the negative participants as much? Because probably most of the negative participants don't have a miniscule probability under the assumption of zero effect. I think you addressed this in your email but I wasn't sure I understood.
