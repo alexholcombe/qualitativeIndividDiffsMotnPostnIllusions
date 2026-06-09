@@ -1,7 +1,7 @@
 data {
   int<lower=0> N;                 // number of data points
   int<lower=0> n_subjects;        // number of subjects
-  int id[N];                      // subject ID  
+  array[N] int id;                      // subject ID  
   vector[N] y;                    // response variable
 
   // Prior settings for theta
@@ -19,7 +19,7 @@ parameters {
 }
 
 transformed parameters {
-  real theta = exp(theta_hat);
+  real theta = exp(theta_hat);  // theta as log normal distribution
 }
 
 model {

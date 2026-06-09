@@ -266,7 +266,7 @@ fle_bayes |>
 #| label: fig-posterior-distributions
 #| fig-cap: "Posterior distributions for the group mean of individual differences $\\mu_{\\theta}$, the standard deviation of individual differences $\\sigma_{\\theta}$, and the proportion of participants with a negative flash lag effect $p(\\theta_i<0)$."
 
-(tidybayes::gather_draws(
+posterior_population_parameters <- tidybayes::gather_draws(
   fle_bayes
   , mu_theta, sigma_theta, p_negative_theta
 ) |>
@@ -276,7 +276,9 @@ fle_bayes |>
       , levels = c("mu_theta", "sigma_theta", "p_negative_theta")
       , labels = c("mu[theta]", "sigma[theta]", "p(theta[i] < 0)")
     )
-  ) |>
+  )
+
+(posterior_population_parameters |>
   ggplot() +
   aes(x = .value, fill = after_stat(level)) +
   stat_halfeye(fill_type = "segments", normalize = "panels", .width = c(.5, .8, .95, .99, 1), slab_color = "black", alpha = 0.7, fatten_point = 2, interval_size_range = c(1, 2)) +
@@ -309,6 +311,124 @@ fle_bayes |>
     # , legend.title.position = "top"
   )) |>
   lemon::reposition_legend("center", panel = 'panel-2-2')
+```
+
+### Estimates of individual effects
+
+```{r}
+#| label: fig-individual-effects
+#| fig-cap: "Posterior distributions of individual effects $\\theta_i$ for each participant. The vertical dashed line marks the point of no effect, i.e., $\\theta_i = 0$."
+
+theta_i <- tidybayes::gather_draws(
+  fle_bayes
+  , theta[i]
+)
+
+# i as factor sorted by median of posterior distribution
+theta_i_ordered <- tidybayes::median_qi(theta_i) |>
+  mutate(
+    i = factor(
+      i
+      , labels = unique(i)[order(.value)]
+      , levels = unique(i)[order(.value)]
+    )
+  )
+
+theta_caterpillar <- theta_i |>
+  dplyr::mutate(
+    # i as factor sorted by median of posterior distribution
+    ID = factor(
+      i
+      , labels = unique(theta_i_ordered$i)[order(theta_i_ordered$.value)]
+      , levels = unique(theta_i_ordered$i)[order(theta_i_ordered$.value)]
+    )
+  ) |>
+  dplyr::rename(theta = .value) |>
+  ggplot() +
+    aes(x = ID, y = theta) +
+    geom_hline(yintercept = 0, color = "black", linetype = "22") +
+    stat_pointinterval(aes(fill = after_stat(y) < 0, interval_color = after_stat(y) < 0), point_color = "white", .width = c(.95), fatten_point = 2, linewidth = 1, shape = 21) +
+    scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1, aesthetics = c("fill", "interval_color")) +
+    guides(interval_color = "none", fill = "none", linewidth = "none") +
+    labs(y = expression(theta), x = "Participant ID") +
+    coord_cartesian(ylim = c(-5, 7.5)) +
+    papaja::theme_apa(base_size = 16) +
+    theme(
+      # axis.line.x = element_blank()
+      # , axis.ticks.x = element_blank()
+      , axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)
+    )
+```
+
+
+### Population distribution
+
+```{r}
+#| label: fig-posterior-population-distribution
+#| fig-cap: "Posterior estimate of the normal population distribution of individual effects $\\theta_i$ with full uncertainty of $\\mu_\\theta$ and $\\sigma_\\theta$. The vertical dashed line marks the point of no effect, i.e., $\\theta_i = 0$. Points represent individual posterior medians for each participant. The shaded area represents the 95% credible interval of the population distribution."
+
+
+posterior_population_distribution <- tidybayes::gather_draws(
+  fle_bayes
+  , mu_theta, sigma_theta
+) |>
+  tidyr::nest(data = c(.chain, .iteration, .draw)) |>
+  tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
+  dplyr::mutate(
+    density = purrr::map2(
+      mu_theta
+      , sigma_theta
+      , \(mu, sigma) {
+        dnorm(
+          x = seq(-5, 7.5, length.out = 101)
+          , mean = mu
+          , sd = sigma
+        )
+      }
+    )
+    , theta = list(seq(-5, 7.5, length.out = 101))
+  )
+
+theta_dist <- posterior_population_distribution |>
+  tidyr::unnest(cols = c(density, theta)) |>
+  ggplot() +
+    aes(x = theta, y = density) +
+    geom_vline(xintercept = 0, color = "black", linetype = "22") +
+    geom_hline(yintercept = 0, color = "black") +
+    geom_lineribbon(
+      aes(ymin = after_stat(ymin), ymax = after_stat(ymax))
+      , stat = "summary"
+      , fun.data = "mean_qi"
+      , color = "black"
+      , fill = "black"
+      , alpha = 0.2
+    ) +
+    # geom_rug(
+    #   data = tidybayes::median_qi(theta_i)
+    #   , aes(x = .value, y = 0)
+    #   , sides = "b"
+    #   , color = "black"
+    #   , alpha = 0.5
+    # ) +
+    # geom_point(
+    #   data = tidybayes::median_qi(theta_i)
+    #   , aes(x = .value, y = 0, fill = .value < 0)
+    #   , color = "white"
+    #   , shape = 21
+    #   , size = 2
+    # ) +
+    scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1) +
+    guides(fill = "none") +
+    labs(x = expression(theta), y = "Density") +
+    papaja::theme_apa(base_size = 16)
+```
+
+```{r}
+#| label: fig-posterior-theta-distribution
+#| fig-cap: "Posterior distribution of individual effects $\\theta_i$ for each participant (left) and the posterior distribution of the population distribution of individual effects $\\theta_i$ (right). The horizontal dashed line marks the point of no effect, i.e., $\\theta_i = 0$."
+
+theta_caterpillar + (theta_dist + coord_flip() + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())) +
+  plot_layout(ncol = 2, widths = c(1, 1/3), guides = "collect", axes = "collect_y")
 ```
 
 
