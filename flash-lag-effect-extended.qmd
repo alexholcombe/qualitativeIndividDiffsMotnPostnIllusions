@@ -541,6 +541,8 @@ Comparing to a strictly positive population distribution (truncated normal in th
 #| label: prior-plot-common
 #| fig-cap: "Prior distribution of $\\theta$ in common model"
 
+mu_prior_common <- rlnorm(1e5, meanlog = 0.5, sdlog = 1)
+
 curve(
   dlnorm(x, meanlog = 0.5, sdlog = 1)
   , from = 0, to = 5
@@ -601,6 +603,8 @@ We find overwhelming evidence in favor of the unconstrained model over the commo
 ```{r}
 #| label: prior-plot-average
 #| fig-cap: "Prior distribution of $\\sigma_{\\theta}$ in average null model"
+
+sigma_prior_average <- rlnorm(1e5, meanlog = -0.5, sdlog = 0.5)
 
 curve(
   dlnorm(x, meanlog = -0.5, sdlog = 0.5)
@@ -747,30 +751,6 @@ data.frame(
 In summary, we find overwhelming evidence for the unconstrained model and the existence of not only flash lag, but also flash lead effects.
 Given the data at hand, the posterior probability that no one exhibits a flash lead effect is practically zero (with a priori assumption that all models are equally likely). 
 
-## Prior settings for $\sigma_{\theta}$
-
-```{r}
-#| label: prior-cross-model-comparison
-#| fig-cap: "Comparison of priors for $\\sigma_{\\theta}$ across the unconstrained, dominance and average null model"
-
-data.frame(priors = c(sigma_prior
-                      ,rlnorm(1e5, meanlog = 0.5, sdlog = 1)
-                      ,rlnorm(1e5, meanlog = -0.5, sdlog = 0.5))
-                      ,model = rep(c("unconstrained","dominance","average null"), each = 1e5)) |>
-  ggplot() +
-  aes(x = priors, fill = model) +
-  lims(x = c(0,5)) +
-  geom_density(alpha = 0.2, linewidth = 0.5) +
-  labs(
-    x = expression(sigma[theta])
-    , y = "Density"
-    , fill = "Prior for"
-  ) +
-  scale_color_viridis_d(option = "G", begin = 0.1, end = 0.8, aesthetics = "fill") +
-  papaja::theme_apa(base_size = 16)
-   
-```
-
 # Alternative dominance models
 ## Log-normal distributed $\theta_i$
 
@@ -792,6 +772,9 @@ In this model priors are put on the mean ($\bar{x}$) and the standard deviation 
 
 ```{r}
 #| label: fit-logN-model
+
+mean_prior_log <- rlnorm(1e5, meanlog = 0.5, sdlog = 1)
+sd_prior_log <-rlnorm(1e5, meanlog = 0.5, sdlog = 1)
 
 pse_logN_model <- readLines("./models/pse-dominance-logN.stan") |>
   paste(collapse = "\n")
@@ -834,3 +817,56 @@ bayes_factor(logN_ml, dominance_ml) -> bf_logN_dom
 
 We still find decisive evidence in favor of an unconstrained distribution of $\theta_i$. As the log-normal model provides a better fit to the data compared to the model assuming a truncated normal distribution for $\theta_i$, the Bayes factor for the unconstrained model over the log-normal model is approximately 1/`r round(bf_logN_dom$bf_median_based,0)` of the Bayes factor for the unconstrained model over the truncated normal model.
 
+# Prior settings
+## Prior settings for $\mu_{\theta}$ (mean of $\theta_i$)
+
+In the current truncated normal model priors have been set on the model parameters $\mu$ and $\sigma$. As the mass of the distribution has been cut and restricted to the positive domain, these do not correspond to the mean and the standard deviation of the distribution, as is the case with the regular normal distribution. Reparametrisation of these priors is still WIP, priors will be added to the plot at a later time. 
+Since the common model assumes one fixed effect shared by all individuals, the prior on the common effect can be understood as a prior on the mean effect. 
+
+```{r}
+#| label: prior-mean-cross-model-comparison
+#| fig-cap: "Comparison of priors for $\\mu_{\\theta}$ across the unconstrained, log-normal and common model (truncated tbd)"
+
+data.frame(priors = c(mu_prior
+                      ,mean_prior_log
+                      ,mu_prior_common)
+                      ,model = rep(c("unconstrained","dominance (log-normal)","common"), each = 1e5)) |>
+  ggplot() +
+  aes(x = priors, fill = model) +
+  lims(x = c(0,5)) +
+  geom_density(alpha = 0.2, linewidth = 0.5) +
+  labs(
+    x = expression(mu[theta])
+    , y = "Density"
+    , fill = "Prior for"
+  ) +
+  scale_color_viridis_d(option = "B", begin = 0.1, end = 0.8, aesthetics = "fill") +
+  papaja::theme_apa(base_size = 16)
+   
+```
+
+## Prior settings for $\sigma_{\theta}$ (standard deviation of $\theta_i$)
+
+In the current truncated normal model priors have been set on the model parameters $\mu$ and $\sigma$. As the mass of the distribution has been cut and restricted to the positive domain, these do not correspond to the mean and the standard deviation of the distribution, as is the case with the regular normal distribution. Reparametrisation of these priors is still WIP, priors will be added to the plot at a later time. 
+
+```{r}
+#| label: prior-sd-cross-model-comparison
+#| fig-cap: "Comparison of priors for $\\sigma_{\\theta}$ across the unconstrained, log-normal and average null model (truncated tbd)"
+
+data.frame(priors = c(sigma_prior
+                      ,sd_prior_log
+                      ,sigma_prior_average)
+                      ,model = rep(c("unconstrained","dominance (log-normal)","average null"), each = 1e5)) |>
+  ggplot() +
+  aes(x = priors, fill = model) +
+  lims(x = c(0,5)) +
+  geom_density(alpha = 0.2, linewidth = 0.5) +
+  labs(
+    x = expression(sigma[theta])
+    , y = "Density"
+    , fill = "Prior for"
+  ) +
+  scale_color_viridis_d(option = "G", begin = 0.1, end = 0.8, aesthetics = "fill") +
+  papaja::theme_apa(base_size = 16)
+   
+```
