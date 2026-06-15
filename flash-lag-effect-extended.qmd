@@ -317,6 +317,117 @@ fle_bayes |>
   lemon::reposition_legend("center", panel = 'panel-2-2')
 ```
 
+### Estimates of individual effects
+
+```{r}
+#| label: fig-individual-effects
+
+theta_i <- tidybayes::gather_draws(
+  fle_bayes
+  , theta[i]
+)
+
+# i as factor sorted by median of posterior distribution
+theta_i_ordered <- tidybayes::median_qi(theta_i) |>
+  mutate(
+    i = factor(
+      i
+      , labels = unique(i)[order(.value)]
+      , levels = unique(i)[order(.value)]
+    )
+  )
+
+theta_caterpillar <- theta_i |>
+  dplyr::mutate(
+    # i as factor sorted by median of posterior distribution
+    ID = factor(
+      i
+      , labels = unique(theta_i_ordered$i)[order(theta_i_ordered$.value)]
+      , levels = unique(theta_i_ordered$i)[order(theta_i_ordered$.value)]
+    )
+  ) |>
+  dplyr::rename(theta = .value) |>
+  ggplot() +
+    aes(x = ID, y = theta) +
+    geom_hline(yintercept = 0, color = "black", linetype = "22") +
+    stat_pointinterval(aes(fill = after_stat(y) < 0, interval_color = after_stat(y) < 0), point_color = "white", .width = c(.95), fatten_point = 2, linewidth = 1, shape = 21) +
+    scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1, aesthetics = c("fill", "interval_color")) +
+    guides(interval_color = "none", fill = "none", linewidth = "none") +
+    labs(y = expression(theta), x = "Participant ID") +
+    coord_cartesian(ylim = c(-5, 7.5)) +
+    papaja::theme_apa(base_size = 16) +
+    theme(
+      # axis.line.x = element_blank()
+      # , axis.ticks.x = element_blank()
+      , axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1)
+    )
+```
+
+```{r}
+#| label: fig-posterior-population-distribution
+
+posterior_population_distribution <- tidybayes::gather_draws(
+  fle_bayes
+  , mu_theta, sigma_theta
+) |>
+  tidyr::nest(data = c(.chain, .iteration, .draw)) |>
+  tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
+  dplyr::mutate(
+    density = purrr::map2(
+      mu_theta
+      , sigma_theta
+      , \(mu, sigma) {
+        dnorm(
+          x = seq(-5, 7.5, length.out = 101)
+          , mean = mu
+          , sd = sigma
+        )
+      }
+    )
+    , theta = list(seq(-5, 7.5, length.out = 101))
+  )
+
+theta_dist <- posterior_population_distribution |>
+  tidyr::unnest(cols = c(density, theta)) |>
+  ggplot() +
+    aes(x = theta, y = density) +
+    geom_vline(xintercept = 0, color = "black", linetype = "22") +
+    geom_hline(yintercept = 0, color = "black") +
+    geom_lineribbon(
+      aes(ymin = after_stat(ymin), ymax = after_stat(ymax))
+      , stat = "summary"
+      , fun.data = "mean_qi"
+      , color = "black"
+      , fill = "black"
+      , alpha = 0.2
+    ) +
+    # geom_rug(
+    #   data = tidybayes::median_qi(theta_i)
+    #   , aes(x = .value, y = 0)
+    #   , sides = "b"
+    #   , color = "black"
+    #   , alpha = 0.5
+    # ) +
+    # geom_point(
+    #   data = tidybayes::median_qi(theta_i)
+    #   , aes(x = .value, y = 0, fill = .value < 0)
+    #   , color = "white"
+    #   , shape = 21
+    #   , size = 2
+    # ) +
+    scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1) +
+    guides(fill = "none") +
+    labs(x = expression(theta), y = "Density") +
+    papaja::theme_apa(base_size = 16)
+```
+
+```{r}
+#| label: fig-posterior-theta-distribution
+#| fig-cap: "Posterior distribution of individual effects $\\theta_i$ for each participant (left) and the posterior distribution of the population distribution of individual effects $\\theta_i$ (right). The horizontal dashed line marks the point of no effect, i.e., $\\theta_i = 0$."
+
+theta_caterpillar + (theta_dist + coord_flip() + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())) +
+  plot_layout(ncol = 2, widths = c(1, 1/3), guides = "collect", axes = "collect_y")
+```
 
 ## Bayes factor approximations
 
@@ -450,13 +561,15 @@ y_{ij} & \sim \mathcal{N}(0, \sigma_\epsilon) \\ \\
 \end{aligned}
 $$
 
-## (1) Dominance vs unconstrained
+## (1) Dominance (truncated normal) vs unconstrained
 
 Priors chosen to be similar to priors of unconstrained model, therefore approximately same percentage of theoretically negative $\theta_i$. But this time, negative $\theta_i$ are excluded / impossible by stan model definition (truncated normal distribution).
 
 ```{r}
 #| label: prior-plot-mu-dominance
 #| fig-cap: "Prior distribution of $\\mu_{\\theta}$ in dominance model"
+
+mu_prior_truncn <- rlnorm(1e5, meanlog = 0.5, sdlog = 1)
 
 curve(
   dlnorm(x, meanlog = 0.5, sdlog = 1)
@@ -467,12 +580,13 @@ curve(
   , las = 1
   , n = 1001
 )
-
 ```
 
 ```{r}
 #| label: prior-plot-sigma-dominance
 #| fig-cap: "Prior distribution of $\\sigma_{\\theta}$ in dominance model"
+
+sigma_prior_truncn <- rlnorm(1e5, meanlog = 0.5, sdlog = 1)
 
 curve(
   dlnorm(x, meanlog = 0.5, sdlog = 1)
@@ -483,7 +597,6 @@ curve(
   , las = 1
   , n = 1001
 )
-
 ```
 
 ```{r}
@@ -520,6 +633,99 @@ str_post_dominance<- data.frame(summary(fle_dominance_bayes)$summary)
 check_hmc_diagnostics(fle_dominance_bayes)
 
 ```
+
+### Estimates of individual effects
+
+```{r}
+#| label: fig-indiv-effects-truncated
+
+theta_i_truncn <- tidybayes::gather_draws(
+  fle_dominance_bayes
+  , theta[i]
+)
+
+theta_i_trunc_ordered <- tidybayes::median_qi(theta_i_truncn) |>
+  mutate(i = factor(i
+                    ,levels = unique(i)[order(.value)]        #levels are ordered after median, 64 = min value = first level
+                    ,labels = unique(i)[order(.value)]        #I create this solely for creating levels in draws, as geom-f calls on draws
+                    ) 
+         )
+
+# Plot median estimates
+truncated_caterpillar <- theta_i_truncn |>
+  mutate(ID = factor(i
+                     ,levels = unique(theta_i_trunc_ordered$i)[order(theta_i_trunc_ordered$.value)]  #new var ID with ordered med levels
+                     ,labels = unique(theta_i_trunc_ordered$i)[order(theta_i_trunc_ordered$.value)]
+                     )
+  ) |>
+  rename(theta = .value) |>
+  ggplot() +
+  aes(x = ID, y = theta) +
+  geom_hline(yintercept = 0, color = "black", linetype = "22") + #string-linetype: line for 2 units, followed by 2 off
+  stat_pointinterval(           #draws point est + CI for draw-input, point_interval function is median_qi by default
+    fill = viridisLite::inferno(1, begin = 0.9), interval_color = viridisLite::inferno(1, begin = 0.9), point_color = "white"
+    , .width = c(.95), fatten_point = 2, linewidth = 1, shape = 21
+  ) +
+  labs(y = expression(theta[i]), x = "Participant ID") +
+  coord_cartesian(ylim = c(0,6)) +
+  papaja::theme_apa(base_size = 16) + 
+  theme(
+    axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 0)
+  )
+  
+```
+
+```{r}
+#| label: fig-post-population-distribution-truncated
+
+post_populDist_truncated <- tidybayes::gather_draws(
+  fle_dominance_bayes
+  , mu_theta, sigma_theta
+) |>
+  tidyr::nest(data = c(.chain, .iteration, .draw)) |>
+  tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
+  mutate(
+    density = purrr::map2(                      # iteration of each density function for each pair of mu and sigma
+      mu_theta, sigma_theta, 
+      \(mu, sigma){
+        dnorm(
+          x = seq(0, 6, length.out = 101)
+          , mean = mu
+          , sd = sigma
+        )
+      }
+    )
+    ,theta = list(seq(0, 6, length.out = 101))    # corresponsing values on x for plot
+  )
+  
+ theta_trunc_dist <- post_populDist_truncated |>
+  tidyr::unnest(cols = c(density, theta)) |>
+  ggplot() + 
+  aes(x = theta, y = density) +
+   geom_vline(xintercept = 0, color = "black", linetype = "22") +
+   geom_hline(yintercept = 0, color = "black") + 
+   geom_lineribbon(                              # function designed to use with output from point_interval
+     aes(ymin = after_stat(ymin), ymax = after_stat(ymax))
+     , stat = "summary"
+     , fun.data = "median_qi"
+     , color = "black"
+     , fill = "black"
+     , alpha = 0.2
+   ) + 
+   labs(x = expression(theta[i]), y = "Density") + 
+   papaja::theme_apa(base_size = 16)
+
+```
+
+```{r}
+#| label: fig-posterior-theta-distribution-truncated
+#| fig-cap: "Posterior distribution of individual effects $\\theta_i$ for each participant (left) and the posterior distribution of the population distribution of individual effects $\\theta_i$ (right). The horizontal dashed line marks the point of no effect, i.e., $\\theta_i = 0$."
+
+truncated_caterpillar + (theta_trunc_dist + coord_flip() + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())) +
+  plot_layout(ncol = 2, width = c(1, 1/3), axes = "collect_y")
+```
+
+### Bayes factor with unconstrained model
 
 ```{r}
 #| label: bayes-factor-dominance
@@ -588,6 +794,36 @@ check_hmc_diagnostics(fle_common_bayes)
 ```
 
 ```{r}
+#| label: fig-posterior-distributions-common
+#| fig-cap: "Posterior distributions for the common effect $\\theta$."
+
+tidybayes::gather_draws(
+  fle_common_bayes
+  , theta
+) |>
+  ggplot() +
+  aes(x = .value, fill = after_stat(level)) +
+  stat_halfeye(fill_type = "segments", normalize = "panels", .width = c(.5, .8, .95, .99, 1), slab_color = "black", alpha = 0.7, fatten_point = 2, interval_size_range = c(1, 2)) +
+  annotate("point", x = c(0, 0.5), y = 0, color = "white") + 
+  scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1) +
+  guides(
+    fill = guide_legend(
+      title = "Credible level"
+      , override.aes = list(color = NA)
+      , reverse = TRUE
+      , direction = "horizontal"
+      , title.position = "top"
+      , title.hjust = 0.5
+    )
+  ) +
+  labs(x = expression(theta), y = "Density") +
+  papaja::theme_apa(base_size = 16)
+
+```
+
+### Bayes factor with unconstrained model
+
+```{r}
 #| label: bayes-factor-common
 
 common_ml <- bridge_sampler(fle_common_bayes, method = "warp3", repetitions = 30, silent = TRUE)
@@ -653,6 +889,113 @@ str_post_average <- data.frame(summary(fle_average_bayes)$summary)
 check_hmc_diagnostics(fle_average_bayes)
 ```
 
+### Estimates of individual effects
+
+```{r}
+#| label: fig-indiv-effects-average
+
+theta_i_average <- tidybayes::gather_draws(
+  fle_average_bayes
+  , theta[i]
+)
+
+theta_i_average_ordered <- tidybayes::median_qi(theta_i_average) |>
+  mutate(i = factor(i
+                    ,levels = unique(i)[order(.value)]        
+                    ,labels = unique(i)[order(.value)]        #I create this solely for creating levels in draws, as geom-f calls on draws
+                    ) 
+         )
+
+# Plot median estimates
+average_caterpillar <- theta_i_average |>
+  mutate(ID = factor(i
+                     ,levels = unique(theta_i_average_ordered$i)[order(theta_i_average_ordered$.value)]  
+                     ,labels = unique(theta_i_average_ordered$i)[order(theta_i_average_ordered$.value)]
+                     )
+  ) |>
+  rename(theta = .value) |>
+  ggplot() +
+  aes(x = ID, y = theta) +
+  geom_hline(yintercept = 0, color = "black", linetype = "22") + #string-linetype: line for 2 units, followed by 2 off
+  stat_pointinterval(           #draws point est + CI for draw-input, point_interval function is median_qi by default
+    aes(fill = after_stat(y) < 0, interval_color = after_stat(y) < 0), 
+    point_color = "white", .width = c(.95), fatten_point = 2, linewidth = 1, shape = 21
+  ) +
+  scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1, aesthetics = c("fill", "interval_color")) +
+  guides(interval_color = "none", fill = "none", linetype = "none") +
+  labs(y = expression(theta[i]), x = "Participant ID") +
+  coord_cartesian(ylim = c(-4,7)) +
+  papaja::theme_apa(base_size = 16) + 
+  theme(
+    axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 0)
+  )
+  
+```
+
+```{r}
+#| label: fig-post-population-distribution-average
+
+post_populDist_average <- tidybayes::gather_draws(
+  fle_average_bayes
+  , sigma_theta
+) |>
+  tidyr::nest(data = c(.chain, .iteration, .draw)) |>
+  tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
+  mutate(
+    mu_theta = 0        
+  ) |>
+  mutate(
+    density = purrr::map2(                      # iteration of each density function for each pair of mu and sigma
+      mu_theta, sigma_theta, 
+      \(mu, sigma){
+        dnorm(
+          x = seq(-4, 7, length.out = 101)
+          , mean = mu
+          , sd = sigma
+        )
+      }
+    )
+    ,theta = list(seq(-4, 7, length.out = 101))    # corresponsing values on x for plot
+  )
+  
+ theta_average_dist <- post_populDist_average |>
+  tidyr::unnest(cols = c(density, theta)) |>
+  ggplot() + 
+  aes(x = theta, y = density) +
+   geom_vline(xintercept = 0, color = "black", linetype = "22") +
+   geom_hline(yintercept = 0, color = "black") + 
+   geom_lineribbon(                              # function designed to use with output from point_interval
+     aes(ymin = after_stat(ymin), ymax = after_stat(ymax))
+     , stat = "summary"
+     , fun.data = "median_qi"
+     , color = "black"
+     , fill = "black"
+     , alpha = 0.2
+   ) + 
+   scale_fill_viridis_d(option = "B", begin = 0.9, end = 0.1) +
+   guides(fill = "none") +
+   labs(x = expression(theta[i]), y = "Density") + 
+   papaja::theme_apa(base_size = 16)
+
+```
+
+```{r}
+#| label: fig-posterior-theta-distribution-ave rage
+#| fig-cap: "Posterior distribution of individual effects $\\theta_i$ for each participant (left) and the posterior distribution of the population distribution of individual effects $\\theta_i$ (right). The horizontal dashed line marks the point of no effect, i.e., $\\theta_i = 0$."
+
+average_caterpillar + (theta_average_dist + coord_flip() + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())) +
+  plot_layout(ncol = 2, width = c(1, 1/3), axes = "collect_y", guides = "collect")
+```
+
+Frage: 
+Unsicher ob density so sinnvoll oder richtig? 
+
+Vllt bin ich damit komplett auf dem Holzweg, aber kann ich post-mu und post-sigma aus den theta berechnen? Dachte zuerst vllt mu = mean der true-scores pro Iteration (weil theta = true score ja eig Messfehler-bereinigt) aber das passt bei Modellen mit mu-Schätzungen nicht. 
+
+Auch Implikationen des oben gezeichneten density plots für mich schwer zu beurteilen, weil ich mit Doku nicht 100% nachempfinden konnte, wie lineribbon die CI berechnet (und deren Verlauf ist iwie strange). Einfach nochmal stärkerer Hinweis darauf, dass Annahme symmetrischer Populationsverteilung um 0 laut Daten fehlgeleitet? Oder Sprezifikations-/ konzeptueller Fehler?
+
+### Bayes factor with unconstrained model
+
 ```{r}
 #| label: bayes-factor-average
 
@@ -691,6 +1034,8 @@ fle_null_bayes <- rstan::stan(
 str_post_null <- data.frame(summary(fle_null_bayes)$summary)
 check_hmc_diagnostics(fle_null_bayes)
 ```
+
+### Bayes factor with unconstrained model
 
 ```{r}
 #| label: bayes-factor-null
@@ -807,6 +1152,98 @@ str_post_logN <- data.frame(summary(fle_logN_bayes)$summary)
 check_hmc_diagnostics(fle_logN_bayes)
 ```
 
+### Estimated of individual effects 
+
+```{r}
+#| label: fig-indiv-effects-log-normal
+
+theta_i_logN <- tidybayes::gather_draws(
+  fle_logN_bayes
+  , theta[i]
+)
+
+theta_i_logN_ordered <- tidybayes::median_qi(theta_i_logN) |>
+  mutate(i = factor(i
+                    ,levels = unique(i)[order(.value)]        
+                    ,labels = unique(i)[order(.value)]        #I create this solely for creating levels in draws, as geom-f calls on draws
+                    ) 
+         )
+
+# Plot median estimates
+log_normal_caterpillar <- theta_i_logN |>
+  mutate(ID = factor(i
+                     ,levels = unique(theta_i_logN_ordered$i)[order(theta_i_logN_ordered$.value)]  #new var ID with ordered med levels
+                     ,labels = unique(theta_i_logN_ordered$i)[order(theta_i_logN_ordered$.value)]
+                     )
+  ) |>
+  rename(theta = .value) |>
+  ggplot() +
+  aes(x = ID, y = theta) +
+  geom_hline(yintercept = 0, color = "black", linetype = "22") + #string-linetype: line for 2 units, followed by 2 off
+  stat_pointinterval(           #draws point est + CI for draw-input, point_interval function is median_qi by default
+    fill = viridisLite::inferno(1, begin = 0.9), interval_color = viridisLite::inferno(1, begin = 0.9), 
+    point_color = "white", .width = c(.95), fatten_point = 2, linewidth = 1, shape = 21
+  ) +
+  labs(y = expression(theta[i]), x = "Participant ID") +
+  coord_cartesian(ylim = c(0,7)) +
+  papaja::theme_apa(base_size = 16) + 
+  theme(
+    axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 0)
+  )
+  
+```
+
+```{r}
+#| label: fig-post-population-distribution-log-normal
+
+post_populDist_logN <- tidybayes::gather_draws(
+  fle_logN_bayes
+  , mu_theta, sigma_theta
+) |>  
+  tidyr::nest(data = c(.chain, .iteration, .draw)) |>
+  tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
+  mutate(
+    density = purrr::map2(                      # iteration of each density function for each pair of mu and sigma
+      mu_theta, sigma_theta, 
+      \(mu, sigma){
+        dlnorm(
+          x = seq(0, 7, length.out = 101)
+          , meanlog = mu
+          , sdlog = sigma
+        )
+      }
+    )
+    ,theta = list(seq(0, 7, length.out = 101))    # corresponsing values on x for plot
+  )
+  
+ theta_logN_dist <- post_populDist_logN |>
+  tidyr::unnest(cols = c(density, theta)) |>
+  ggplot() + 
+  aes(x = theta, y = density) +
+   geom_vline(xintercept = 0, color = "black", linetype = "22") +
+   geom_hline(yintercept = 0, color = "black") + 
+   geom_lineribbon(                              # function designed to use with output from point_interval
+     aes(ymin = after_stat(ymin), ymax = after_stat(ymax))
+     , stat = "summary"
+     , fun.data = "median_qi"
+     , color = "black"
+     , fill = "black"
+     , alpha = 0.2
+   ) + 
+   labs(x = expression(theta[i]), y = "Density") + 
+   papaja::theme_apa(base_size = 16)
+
+```
+
+```{r}
+#| label: fig-posterior-theta-distribution-log-normal
+#| fig-cap: "Posterior distribution of individual effects $\\theta_i$ for each participant (left) and the posterior distribution of the population distribution of individual effects $\\theta_i$ (right). The horizontal dashed line marks the point of no effect, i.e., $\\theta_i = 0$."
+
+log_normal_caterpillar + (theta_logN_dist + coord_flip() + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())) +
+  plot_layout(ncol = 2, width = c(1, 1/3), axes = "collect_y")
+```
+### Bayes factor with unconstrained model
+
 ```{r}
 #| label: bayes-factor-logN
 
@@ -818,19 +1255,26 @@ bayes_factor(logN_ml, dominance_ml) -> bf_logN_dom
 We still find decisive evidence in favor of an unconstrained distribution of $\theta_i$. As the log-normal model provides a better fit to the data compared to the model assuming a truncated normal distribution for $\theta_i$, the Bayes factor for the unconstrained model over the log-normal model is approximately 1/`r round(bf_logN_dom$bf_median_based,0)` of the Bayes factor for the unconstrained model over the truncated normal model.
 
 # Prior settings
-## Prior settings for $\mu_{\theta}$ (mean of $\theta_i$)
+## Prior settings for mean of $\theta_i$
 
-In the current truncated normal model priors have been set on the model parameters $\mu$ and $\sigma$. As the mass of the distribution has been cut and restricted to the positive domain, these do not correspond to the mean and the standard deviation of the distribution, as is the case with the regular normal distribution. Reparametrisation of these priors is still WIP, priors will be added to the plot at a later time. 
+To assess the (possible) impact of different prior assumptions on the results of the model comparison, the prior distributions for the mean of $theta_i$ are plotted below. 
 Since the common model assumes one fixed effect shared by all individuals, the prior on the common effect can be understood as a prior on the mean effect. 
 
 ```{r}
 #| label: prior-mean-cross-model-comparison
 #| fig-cap: "Comparison of priors for $\\mu_{\\theta}$ across the unconstrained, log-normal and common model (truncated tbd)"
 
+# Calculate prior implied for mean of theta_i of truncated normal model
+trunc_alpha <- (0-mu_prior_truncn)/sigma_prior_truncn
+trunc_Z <- 1-pnorm(trunc_alpha)
+mean_prior_truncn <- mu_prior_truncn + sigma_prior_truncn*(dnorm(trunc_alpha)/trunc_Z)
+
+# Plot
 data.frame(priors = c(mu_prior
                       ,mean_prior_log
+                      ,mean_prior_truncn
                       ,mu_prior_common)
-                      ,model = rep(c("unconstrained","dominance (log-normal)","common"), each = 1e5)) |>
+                      ,model = rep(c("unconstrained","log-normal","truncated normal","common"), each = 1e5)) |>
   ggplot() +
   aes(x = priors, fill = model) +
   lims(x = c(0,5)) +
@@ -845,18 +1289,27 @@ data.frame(priors = c(mu_prior
    
 ```
 
-## Prior settings for $\sigma_{\theta}$ (standard deviation of $\theta_i$)
+## Prior settings for standard deviation of $\theta_i$
 
-In the current truncated normal model priors have been set on the model parameters $\mu$ and $\sigma$. As the mass of the distribution has been cut and restricted to the positive domain, these do not correspond to the mean and the standard deviation of the distribution, as is the case with the regular normal distribution. Reparametrisation of these priors is still WIP, priors will be added to the plot at a later time. 
+To assess the (possible) impact of different prior assumptions on the results of the model comparison, the prior distributions for the standard deviation of $theta_i$ are plotted below. 
+
 
 ```{r}
 #| label: prior-sd-cross-model-comparison
 #| fig-cap: "Comparison of priors for $\\sigma_{\\theta}$ across the unconstrained, log-normal and average null model (truncated tbd)"
 
+# Calculate implied prior for sd of theta_i of truncated normal model
+sd_prior_truncn <- sqrt(
+  (sigma_prior_truncn^2)*
+    (1 + trunc_alpha*dnorm(trunc_alpha)/trunc_Z -(dnorm(trunc_alpha)/trunc_Z)^2)
+)
+
+# Plot
 data.frame(priors = c(sigma_prior
                       ,sd_prior_log
+                      ,sd_prior_truncn
                       ,sigma_prior_average)
-                      ,model = rep(c("unconstrained","dominance (log-normal)","average null"), each = 1e5)) |>
+                      ,model = rep(c("unconstrained","log-normal","truncated normal","average null"), each = 1e5)) |>
   ggplot() +
   aes(x = priors, fill = model) +
   lims(x = c(0,5)) +
