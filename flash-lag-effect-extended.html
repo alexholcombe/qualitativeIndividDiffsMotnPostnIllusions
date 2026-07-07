@@ -8,7 +8,7 @@
 
 <meta name="author" content="Frederik Aust">
 <meta name="author" content="Alex Holcombe">
-<meta name="dcterms.date" content="2026-06-15">
+<meta name="dcterms.date" content="2026-07-07">
 
 <title>Inidividual Differences Investigation for Flash Lag Effect</title>
 <style>
@@ -141,10 +141,6 @@ window.Quarto = {
   <li><a href="#bayes-factor-with-unconstrained-model-3" id="toc-bayes-factor-with-unconstrained-model-3" class="nav-link" data-scroll-target="#bayes-factor-with-unconstrained-model-3">Bayes factor with unconstrained model</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#bayesian-model-comparison" id="toc-bayesian-model-comparison" class="nav-link" data-scroll-target="#bayesian-model-comparison">Bayesian model comparison</a>
-  <ul class="collapse">
-  <li><a href="#bayes-factor-summary-table" id="toc-bayes-factor-summary-table" class="nav-link" data-scroll-target="#bayes-factor-summary-table">Bayes factor summary table</a></li>
-  </ul></li>
   <li><a href="#alternative-dominance-models" id="toc-alternative-dominance-models" class="nav-link" data-scroll-target="#alternative-dominance-models">Alternative dominance models</a>
   <ul class="collapse">
   <li><a href="#log-normal-distributed-theta_i" id="toc-log-normal-distributed-theta_i" class="nav-link" data-scroll-target="#log-normal-distributed-theta_i">Log-normal distributed <span class="math inline">\(\theta_i\)</span></a>
@@ -157,6 +153,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#prior-settings-for-mean-of-theta_i" id="toc-prior-settings-for-mean-of-theta_i" class="nav-link" data-scroll-target="#prior-settings-for-mean-of-theta_i">Prior settings for mean of <span class="math inline">\(\theta_i\)</span></a></li>
   <li><a href="#prior-settings-for-standard-deviation-of-theta_i" id="toc-prior-settings-for-standard-deviation-of-theta_i" class="nav-link" data-scroll-target="#prior-settings-for-standard-deviation-of-theta_i">Prior settings for standard deviation of <span class="math inline">\(\theta_i\)</span></a></li>
+  </ul></li>
+  <li><a href="#bayesian-model-comparison" id="toc-bayesian-model-comparison" class="nav-link" data-scroll-target="#bayesian-model-comparison">Bayesian model comparison</a>
+  <ul class="collapse">
+  <li><a href="#bayes-factor-summary-table" id="toc-bayes-factor-summary-table" class="nav-link" data-scroll-target="#bayes-factor-summary-table">Bayes factor summary table</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -197,7 +197,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 15, 2026</p>
+      <p class="date">July 7, 2026</p>
     </div>
   </div>
   
@@ -362,11 +362,11 @@ p^{*}(\theta_i&lt;0) &amp; \sim \mathcal{N}(a_p, b_p) \\ \\
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>unconstrained_joint_prior</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 17971 rows containing non-finite outside the scale range
+<pre><code>Warning: Removed 18073 rows containing non-finite outside the scale range
 (`stat_density2d()`).</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 17971 rows containing missing values or values outside the scale range
+<pre><code>Warning: Removed 18073 rows containing missing values or values outside the scale range
 (`geom_point()`).</code></pre>
 </div>
 <div class="cell-output-display">
@@ -829,7 +829,7 @@ Figure&nbsp;3: Posterior and prior density for the proportion of participants wi
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bayes_factor_10 <span class="ot">&lt;-</span> prior_density <span class="sc">/</span> posterior_density</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>bayes_factor_10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 158047.5</code></pre>
+<pre><code>[1] 168813.6</code></pre>
 </div>
 </div>
 <p>We find overwhelming evidence for the unconstrained population distribution. In other words, the assumption that noone exhibits a flash <em>lead</em> effect, seems highly implausible.</p>
@@ -1075,9 +1075,9 @@ Figure&nbsp;4: Posterior distribution of individual effects <span class="math in
 <span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(unconstrained_ml, dominance_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Bayes factor (based on medians of log marginal likelihood estimates)
- in favor of x1 over x2: 69020875.96830
-Range of estimates: 64985196.15211 to 75005729.39171
-Interquartile range: 3810770.39601</code></pre>
+ in favor of x1 over x2: 69819493.66442
+Range of estimates: 64579233.85442 to 75957126.22926
+Interquartile range: 3964161.40506</code></pre>
 </div>
 </div>
 <p>Comparing to a strictly positive population distribution (truncated normal in this case), we find overwhelming evidence for an unconstrained population distribution, implying that some individuals could truly exhibit a flash lead effect. In other words, these results suggest that it is highly unlikely that no one exhibits a true lead effect.</p>
@@ -1199,9 +1199,9 @@ Figure&nbsp;5: Posterior distributions for the common effect <span class="math i
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(unconstrained_ml, common_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Bayes factor (based on medians of log marginal likelihood estimates)
- in favor of x1 over x2: 1385116319782.97510
-Range of estimates: 1381678706456.34131 to 1388377271823.49121
-Interquartile range: 1987886116.13599</code></pre>
+ in favor of x1 over x2: 1384706029050.50781
+Range of estimates: 1382026617605.80322 to 1388022943136.60547
+Interquartile range: 2119253085.31055</code></pre>
 </div>
 </div>
 <p>We find overwhelming evidence in favor of the unconstrained model over the common effect model. It therefore seems highly implausible that all participants share a common true effect of the same size, as models allowing for interindividual differences in true effects are a better fit for the data. These results also validate / support the study design, as interindividual differences in true effects were measureable.</p>
@@ -1390,9 +1390,9 @@ Energy:</code></pre>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(unconstrained_ml, average_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Bayes factor (based on medians of log marginal likelihood estimates)
- in favor of x1 over x2: 4652484165409.80566
-Range of estimates: 4631299920984.72070 to 4667023855689.11230
-Interquartile range: 11492726716.26074</code></pre>
+ in favor of x1 over x2: 4652565882359.93555
+Range of estimates: 4633058895555.29883 to 4673035268899.32520
+Interquartile range: 10401704993.96484</code></pre>
 </div>
 </div>
 </section>
@@ -1456,116 +1456,12 @@ number of samples.</code></pre>
 <div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(unconstrained_ml, null_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Bayes factor (based on medians of log marginal likelihood estimates)
- in favor of x1 over x2: 307874293304388985462082868420644.00000
-Range of estimates: 307108756053052231188680842282800.00000 to 308603051765239002826804088262280.00000
-Interquartile range: 389033367778034159808808644488.00000</code></pre>
+ in favor of x1 over x2: 307787588911056248948404840222682.00000
+Range of estimates: 307180694601333452140040646268464.00000 to 308537362141014191488040684860268.00000
+Interquartile range: 497388724279721103926246226866.00000</code></pre>
 </div>
 </div>
 </section>
-</section>
-</section>
-<section id="bayesian-model-comparison" class="level1">
-<h1>Bayesian model comparison</h1>
-<section id="bayes-factor-summary-table" class="level2">
-<h2 class="anchored" data-anchor-id="bayes-factor-summary-table">Bayes factor summary table</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>bfs_base_unc <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">bayes_factor</span>(null_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(average_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
-<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(common_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
-<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(dominance_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
-<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>    , <span class="dv">1</span></span>
-<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive posterior probability: naive assumption that prior odds = 1 for all model comparisons</span></span>
-<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a><span class="co"># -&gt; post prob = bf / sum(bf)</span></span>
-<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>npp_base_unc <span class="ot">&lt;-</span> bfs_base_unc <span class="sc">/</span> <span class="fu">sum</span>(bfs_base_unc) </span>
-<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a><span class="co"># model diagnostics</span></span>
-<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a>rhat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">max</span>(str_post_null<span class="sc">$</span>Rhat)</span>
-<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_average<span class="sc">$</span>Rhat)</span>
-<span id="cb79-16"><a href="#cb79-16" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_common<span class="sc">$</span>Rhat)</span>
-<span id="cb79-17"><a href="#cb79-17" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_dominance<span class="sc">$</span>Rhat)</span>
-<span id="cb79-18"><a href="#cb79-18" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_unconstrained<span class="sc">$</span>Rhat))</span>
-<span id="cb79-19"><a href="#cb79-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-20"><a href="#cb79-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-21"><a href="#cb79-21" aria-hidden="true" tabindex="-1"></a><span class="co"># bridge sampling CV</span></span>
-<span id="cb79-22"><a href="#cb79-22" aria-hidden="true" tabindex="-1"></a> bridge.cv <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sd</span>(null_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(null_ml<span class="sc">$</span>logml))</span>
-<span id="cb79-23"><a href="#cb79-23" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(average_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(average_ml<span class="sc">$</span>logml))</span>
-<span id="cb79-24"><a href="#cb79-24" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(common_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(common_ml<span class="sc">$</span>logml))</span>
-<span id="cb79-25"><a href="#cb79-25" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(dominance_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(dominance_ml<span class="sc">$</span>logml))</span>
-<span id="cb79-26"><a href="#cb79-26" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(unconstrained_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(unconstrained_ml<span class="sc">$</span>logml)))</span>
-<span id="cb79-27"><a href="#cb79-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-28"><a href="#cb79-28" aria-hidden="true" tabindex="-1"></a><span class="co"># summary table</span></span>
-<span id="cb79-29"><a href="#cb79-29" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
-<span id="cb79-30"><a href="#cb79-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="fu">c</span>(<span class="st">"Null model"</span>, <span class="st">"Average null model"</span>, <span class="st">"Common model"</span>, <span class="st">"Dominance model"</span>, <span class="st">"Unconstrained model"</span>)</span>
-<span id="cb79-31"><a href="#cb79-31" aria-hidden="true" tabindex="-1"></a>  , <span class="at">bf =</span> <span class="fu">printnum</span>(bfs_base_unc, <span class="at">format =</span> <span class="st">"e"</span>)</span>
-<span id="cb79-32"><a href="#cb79-32" aria-hidden="true" tabindex="-1"></a>  , <span class="at">npp =</span> <span class="fu">printnum</span>(npp_base_unc, <span class="at">gt1 =</span> F, <span class="at">digits =</span> <span class="dv">2</span>)</span>
-<span id="cb79-33"><a href="#cb79-33" aria-hidden="true" tabindex="-1"></a>  , <span class="at">rhat =</span> <span class="fu">printnum</span>(rhat, <span class="at">digits =</span> <span class="dv">3</span>)</span>
-<span id="cb79-34"><a href="#cb79-34" aria-hidden="true" tabindex="-1"></a>  , <span class="at">cv =</span> <span class="fu">printnum</span>(bridge.cv, <span class="at">format =</span> <span class="st">"e"</span>)</span>
-<span id="cb79-35"><a href="#cb79-35" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb79-36"><a href="#cb79-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Model ($i$)"</span>, <span class="st">"$BF_{i/unconstrained}$"</span>, <span class="st">"NPP"</span>, <span class="st">"max.$</span><span class="sc">\\</span><span class="st">hat{R}$"</span>, <span class="st">"Bridge Sampling CV"</span>)</span>
-<span id="cb79-37"><a href="#cb79-37" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Summary table: Bayes Factors over unconstrained model (=reference model) and naive posterior probability (NPP), based on assumption of equal prior model odds. Maximum <span class="math inline">\(\hat{R}\)</span> and coefficient of variation (CV) for the bridge sampling are also given for each model.</caption>
-<colgroup>
-<col style="width: 23%">
-<col style="width: 27%">
-<col style="width: 7%">
-<col style="width: 16%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Model (<span class="math inline">\(i\)</span>)</th>
-<th style="text-align: left;"><span class="math inline">\(BF_{i/unconstrained}\)</span></th>
-<th style="text-align: left;">NPP</th>
-<th style="text-align: left;">max.<span class="math inline">\(\hat{R}\)</span></th>
-<th style="text-align: left;">Bridge Sampling CV</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Null model</td>
-<td style="text-align: left;"><span class="math inline">\(3.25 \times 10^{-33}\)</span></td>
-<td style="text-align: left;">.00</td>
-<td style="text-align: left;">1.000</td>
-<td style="text-align: left;"><span class="math inline">\(4.44 \times 10^{-8}\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Average null model</td>
-<td style="text-align: left;"><span class="math inline">\(2.15 \times 10^{-13}\)</span></td>
-<td style="text-align: left;">.00</td>
-<td style="text-align: left;">1.000</td>
-<td style="text-align: left;"><span class="math inline">\(3.70 \times 10^{-6}\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Common model</td>
-<td style="text-align: left;"><span class="math inline">\(7.22 \times 10^{-13}\)</span></td>
-<td style="text-align: left;">.00</td>
-<td style="text-align: left;">1.000</td>
-<td style="text-align: left;"><span class="math inline">\(2.90 \times 10^{-7}\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dominance model</td>
-<td style="text-align: left;"><span class="math inline">\(1.45 \times 10^{-8}\)</span></td>
-<td style="text-align: left;">.00</td>
-<td style="text-align: left;">1.001</td>
-<td style="text-align: left;"><span class="math inline">\(1.09 \times 10^{-4}\)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Unconstrained model</td>
-<td style="text-align: left;"><span class="math inline">\(1.00\)</span></td>
-<td style="text-align: left;">&gt; .99</td>
-<td style="text-align: left;">1.000</td>
-<td style="text-align: left;"><span class="math inline">\(3.17 \times 10^{-6}\)</span></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>In summary, we find overwhelming evidence for the unconstrained model and the existence of not only flash lag, but also flash lead effects. Given the data at hand, the posterior probability that no one exhibits a flash lead effect is practically zero (with a priori assumption that all models are equally likely).</p>
 </section>
 </section>
 <section id="alternative-dominance-models" class="level1">
@@ -1586,38 +1482,38 @@ s &amp; \sim \log \mathcal{N}(a_s, b_s)
 \]</span></p>
 <p>In this model priors are put on the mean (<span class="math inline">\(\bar{x}\)</span>) and the standard deviation (<span class="math inline">\(s\)</span>) of the log-normal distribution. We chose this approach because we assume that expressing prior beliefs about the mean and standard deviation of <span class="math inline">\(\theta_i\)</span> is more intuitive than expressing prior beliefs about the parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> of the log-normal distribution.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>mean_prior_log <span class="ot">&lt;-</span> <span class="fu">rlnorm</span>(<span class="fl">1e5</span>, <span class="at">meanlog =</span> <span class="fl">0.5</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>sd_prior_log <span class="ot">&lt;-</span><span class="fu">rlnorm</span>(<span class="fl">1e5</span>, <span class="at">meanlog =</span> <span class="fl">0.5</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>pse_logN_model <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"./models/pse-dominance-logN.stan"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>fle_stan_logN_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(fle_data) <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span>
-<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">n_subjects =</span> <span class="fu">length</span>(<span class="fu">unique</span>(fle_data<span class="sc">$</span>ID)) <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span>
-<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>  , <span class="at">id =</span> <span class="fu">as.integer</span>(<span class="fu">as.factor</span>(fle_data<span class="sc">$</span>ID))</span>
-<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>  , <span class="at">y =</span> fle_data<span class="sc">$</span>dva</span>
-<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prior settings</span></span>
-<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_logN_mu =</span> <span class="fl">0.5</span></span>
-<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_logN_sigma =</span> <span class="dv">1</span></span>
-<span id="cb80-16"><a href="#cb80-16" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_logN_mu =</span> <span class="fl">0.5</span></span>
-<span id="cb80-17"><a href="#cb80-17" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_logN_sigma =</span> <span class="dv">1</span></span>
-<span id="cb80-18"><a href="#cb80-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb80-19"><a href="#cb80-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-20"><a href="#cb80-20" aria-hidden="true" tabindex="-1"></a>fle_logN_bayes <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(</span>
-<span id="cb80-21"><a href="#cb80-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> pse_logN_model</span>
-<span id="cb80-22"><a href="#cb80-22" aria-hidden="true" tabindex="-1"></a>  , <span class="at">data =</span> fle_stan_logN_data</span>
-<span id="cb80-23"><a href="#cb80-23" aria-hidden="true" tabindex="-1"></a>  , <span class="at">iter =</span> <span class="fl">1e5</span><span class="sc">/</span><span class="dv">4</span> <span class="sc">+</span> <span class="dv">1000</span></span>
-<span id="cb80-24"><a href="#cb80-24" aria-hidden="true" tabindex="-1"></a>  , <span class="at">warmup =</span> <span class="dv">1000</span></span>
-<span id="cb80-25"><a href="#cb80-25" aria-hidden="true" tabindex="-1"></a>  , <span class="at">chains =</span> <span class="dv">4</span></span>
-<span id="cb80-26"><a href="#cb80-26" aria-hidden="true" tabindex="-1"></a>  , <span class="at">cores =</span> <span class="dv">4</span></span>
-<span id="cb80-27"><a href="#cb80-27" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seed =</span> <span class="dv">123</span></span>
-<span id="cb80-28"><a href="#cb80-28" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb80-29"><a href="#cb80-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-30"><a href="#cb80-30" aria-hidden="true" tabindex="-1"></a><span class="co"># model diagnostics</span></span>
-<span id="cb80-31"><a href="#cb80-31" aria-hidden="true" tabindex="-1"></a>str_post_logN <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">summary</span>(fle_logN_bayes)<span class="sc">$</span>summary)</span>
-<span id="cb80-32"><a href="#cb80-32" aria-hidden="true" tabindex="-1"></a><span class="fu">check_hmc_diagnostics</span>(fle_logN_bayes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>mean_prior_log <span class="ot">&lt;-</span> <span class="fu">rlnorm</span>(<span class="fl">1e5</span>, <span class="at">meanlog =</span> <span class="fl">0.5</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>sd_prior_log <span class="ot">&lt;-</span><span class="fu">rlnorm</span>(<span class="fl">1e5</span>, <span class="at">meanlog =</span> <span class="fl">0.5</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>pse_logN_model <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"./models/pse-dominance-logN.stan"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>fle_stan_logN_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(fle_data) <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">n_subjects =</span> <span class="fu">length</span>(<span class="fu">unique</span>(fle_data<span class="sc">$</span>ID)) <span class="sc">|&gt;</span> <span class="fu">as.integer</span>()</span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>  , <span class="at">id =</span> <span class="fu">as.integer</span>(<span class="fu">as.factor</span>(fle_data<span class="sc">$</span>ID))</span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>  , <span class="at">y =</span> fle_data<span class="sc">$</span>dva</span>
+<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prior settings</span></span>
+<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_logN_mu =</span> <span class="fl">0.5</span></span>
+<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_logN_sigma =</span> <span class="dv">1</span></span>
+<span id="cb79-16"><a href="#cb79-16" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_logN_mu =</span> <span class="fl">0.5</span></span>
+<span id="cb79-17"><a href="#cb79-17" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_logN_sigma =</span> <span class="dv">1</span></span>
+<span id="cb79-18"><a href="#cb79-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb79-19"><a href="#cb79-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-20"><a href="#cb79-20" aria-hidden="true" tabindex="-1"></a>fle_logN_bayes <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(</span>
+<span id="cb79-21"><a href="#cb79-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> pse_logN_model</span>
+<span id="cb79-22"><a href="#cb79-22" aria-hidden="true" tabindex="-1"></a>  , <span class="at">data =</span> fle_stan_logN_data</span>
+<span id="cb79-23"><a href="#cb79-23" aria-hidden="true" tabindex="-1"></a>  , <span class="at">iter =</span> <span class="fl">1e5</span><span class="sc">/</span><span class="dv">4</span> <span class="sc">+</span> <span class="dv">1000</span></span>
+<span id="cb79-24"><a href="#cb79-24" aria-hidden="true" tabindex="-1"></a>  , <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb79-25"><a href="#cb79-25" aria-hidden="true" tabindex="-1"></a>  , <span class="at">chains =</span> <span class="dv">4</span></span>
+<span id="cb79-26"><a href="#cb79-26" aria-hidden="true" tabindex="-1"></a>  , <span class="at">cores =</span> <span class="dv">4</span></span>
+<span id="cb79-27"><a href="#cb79-27" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb79-28"><a href="#cb79-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb79-29"><a href="#cb79-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-30"><a href="#cb79-30" aria-hidden="true" tabindex="-1"></a><span class="co"># model diagnostics</span></span>
+<span id="cb79-31"><a href="#cb79-31" aria-hidden="true" tabindex="-1"></a>str_post_logN <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">summary</span>(fle_logN_bayes)<span class="sc">$</span>summary)</span>
+<span id="cb79-32"><a href="#cb79-32" aria-hidden="true" tabindex="-1"></a><span class="fu">check_hmc_diagnostics</span>(fle_logN_bayes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Divergences:</code></pre>
@@ -1643,81 +1539,81 @@ Energy:</code></pre>
 <section id="estimated-of-individual-effects" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-of-individual-effects">Estimated of individual effects</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>theta_i_logN <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(</span>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>theta_i_logN <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  fle_logN_bayes</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  , theta[i]</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>theta_i_logN_ordered <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">median_qi</span>(theta_i_logN) <span class="sc">|&gt;</span></span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> <span class="fu">factor</span>(i</span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>                    ,<span class="at">levels =</span> <span class="fu">unique</span>(i)[<span class="fu">order</span>(.value)]        </span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>                    ,<span class="at">labels =</span> <span class="fu">unique</span>(i)[<span class="fu">order</span>(.value)]        <span class="co">#I create this solely for creating levels in draws, as geom-f calls on draws</span></span>
+<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>                    ) </span>
+<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a>         )</span>
+<span id="cb86-12"><a href="#cb86-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-13"><a href="#cb86-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot median estimates</span></span>
+<span id="cb86-14"><a href="#cb86-14" aria-hidden="true" tabindex="-1"></a>log_normal_caterpillar <span class="ot">&lt;-</span> theta_i_logN <span class="sc">|&gt;</span></span>
+<span id="cb86-15"><a href="#cb86-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">factor</span>(i</span>
+<span id="cb86-16"><a href="#cb86-16" aria-hidden="true" tabindex="-1"></a>                     ,<span class="at">levels =</span> <span class="fu">unique</span>(theta_i_logN_ordered<span class="sc">$</span>i)[<span class="fu">order</span>(theta_i_logN_ordered<span class="sc">$</span>.value)]  <span class="co">#new var ID with ordered med levels</span></span>
+<span id="cb86-17"><a href="#cb86-17" aria-hidden="true" tabindex="-1"></a>                     ,<span class="at">labels =</span> <span class="fu">unique</span>(theta_i_logN_ordered<span class="sc">$</span>i)[<span class="fu">order</span>(theta_i_logN_ordered<span class="sc">$</span>.value)]</span>
+<span id="cb86-18"><a href="#cb86-18" aria-hidden="true" tabindex="-1"></a>                     )</span>
+<span id="cb86-19"><a href="#cb86-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb86-20"><a href="#cb86-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">theta =</span> .value) <span class="sc">|&gt;</span></span>
+<span id="cb86-21"><a href="#cb86-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb86-22"><a href="#cb86-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> ID, <span class="at">y =</span> theta) <span class="sc">+</span></span>
+<span id="cb86-23"><a href="#cb86-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="st">"22"</span>) <span class="sc">+</span> <span class="co">#string-linetype: line for 2 units, followed by 2 off</span></span>
+<span id="cb86-24"><a href="#cb86-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_pointinterval</span>(           <span class="co">#draws point est + CI for draw-input, point_interval function is median_qi by default</span></span>
+<span id="cb86-25"><a href="#cb86-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> viridisLite<span class="sc">::</span><span class="fu">inferno</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.9</span>), <span class="at">interval_color =</span> viridisLite<span class="sc">::</span><span class="fu">inferno</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.9</span>), </span>
+<span id="cb86-26"><a href="#cb86-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_color =</span> <span class="st">"white"</span>, <span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">95</span>), <span class="at">fatten_point =</span> <span class="dv">2</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">21</span></span>
+<span id="cb86-27"><a href="#cb86-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb86-28"><a href="#cb86-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(theta[i]), <span class="at">x =</span> <span class="st">"Participant ID"</span>) <span class="sc">+</span></span>
+<span id="cb86-29"><a href="#cb86-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">7</span>)) <span class="sc">+</span></span>
+<span id="cb86-30"><a href="#cb86-30" aria-hidden="true" tabindex="-1"></a>  papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>) <span class="sc">+</span> </span>
+<span id="cb86-31"><a href="#cb86-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb86-32"><a href="#cb86-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>, <span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">0</span>)</span>
+<span id="cb86-33"><a href="#cb86-33" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>post_populDist_logN <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(</span>
 <span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  fle_logN_bayes</span>
-<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  , theta[i]</span>
-<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>theta_i_logN_ordered <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">median_qi</span>(theta_i_logN) <span class="sc">|&gt;</span></span>
-<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> <span class="fu">factor</span>(i</span>
-<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>                    ,<span class="at">levels =</span> <span class="fu">unique</span>(i)[<span class="fu">order</span>(.value)]        </span>
-<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>                    ,<span class="at">labels =</span> <span class="fu">unique</span>(i)[<span class="fu">order</span>(.value)]        <span class="co">#I create this solely for creating levels in draws, as geom-f calls on draws</span></span>
-<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>                    ) </span>
-<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>         )</span>
-<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot median estimates</span></span>
-<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a>log_normal_caterpillar <span class="ot">&lt;-</span> theta_i_logN <span class="sc">|&gt;</span></span>
-<span id="cb87-15"><a href="#cb87-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">factor</span>(i</span>
-<span id="cb87-16"><a href="#cb87-16" aria-hidden="true" tabindex="-1"></a>                     ,<span class="at">levels =</span> <span class="fu">unique</span>(theta_i_logN_ordered<span class="sc">$</span>i)[<span class="fu">order</span>(theta_i_logN_ordered<span class="sc">$</span>.value)]  <span class="co">#new var ID with ordered med levels</span></span>
-<span id="cb87-17"><a href="#cb87-17" aria-hidden="true" tabindex="-1"></a>                     ,<span class="at">labels =</span> <span class="fu">unique</span>(theta_i_logN_ordered<span class="sc">$</span>i)[<span class="fu">order</span>(theta_i_logN_ordered<span class="sc">$</span>.value)]</span>
-<span id="cb87-18"><a href="#cb87-18" aria-hidden="true" tabindex="-1"></a>                     )</span>
-<span id="cb87-19"><a href="#cb87-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb87-20"><a href="#cb87-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">theta =</span> .value) <span class="sc">|&gt;</span></span>
-<span id="cb87-21"><a href="#cb87-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb87-22"><a href="#cb87-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> ID, <span class="at">y =</span> theta) <span class="sc">+</span></span>
-<span id="cb87-23"><a href="#cb87-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="st">"22"</span>) <span class="sc">+</span> <span class="co">#string-linetype: line for 2 units, followed by 2 off</span></span>
-<span id="cb87-24"><a href="#cb87-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_pointinterval</span>(           <span class="co">#draws point est + CI for draw-input, point_interval function is median_qi by default</span></span>
-<span id="cb87-25"><a href="#cb87-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> viridisLite<span class="sc">::</span><span class="fu">inferno</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.9</span>), <span class="at">interval_color =</span> viridisLite<span class="sc">::</span><span class="fu">inferno</span>(<span class="dv">1</span>, <span class="at">begin =</span> <span class="fl">0.9</span>), </span>
-<span id="cb87-26"><a href="#cb87-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_color =</span> <span class="st">"white"</span>, <span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">95</span>), <span class="at">fatten_point =</span> <span class="dv">2</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">21</span></span>
-<span id="cb87-27"><a href="#cb87-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb87-28"><a href="#cb87-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(theta[i]), <span class="at">x =</span> <span class="st">"Participant ID"</span>) <span class="sc">+</span></span>
-<span id="cb87-29"><a href="#cb87-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">7</span>)) <span class="sc">+</span></span>
-<span id="cb87-30"><a href="#cb87-30" aria-hidden="true" tabindex="-1"></a>  papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>) <span class="sc">+</span> </span>
-<span id="cb87-31"><a href="#cb87-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb87-32"><a href="#cb87-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>, <span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">0</span>)</span>
-<span id="cb87-33"><a href="#cb87-33" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  , mu_theta, sigma_theta</span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span>  </span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">nest</span>(<span class="at">data =</span> <span class="fu">c</span>(.chain, .iteration, .draw)) <span class="sc">|&gt;</span></span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .variable, <span class="at">values_from =</span> .value) <span class="sc">|&gt;</span></span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">density =</span> purrr<span class="sc">::</span><span class="fu">map2</span>(                      <span class="co"># iteration of each density function for each pair of mu and sigma</span></span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>      mu_theta, sigma_theta, </span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>      \(mu, sigma){</span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dlnorm</span>(</span>
+<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> <span class="dv">101</span>)</span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a>          , <span class="at">meanlog =</span> mu</span>
+<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a>          , <span class="at">sdlog =</span> sigma</span>
+<span id="cb87-15"><a href="#cb87-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb87-16"><a href="#cb87-16" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb87-17"><a href="#cb87-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb87-18"><a href="#cb87-18" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">theta =</span> <span class="fu">list</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> <span class="dv">101</span>))    <span class="co"># corresponsing values on x for plot</span></span>
+<span id="cb87-19"><a href="#cb87-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb87-20"><a href="#cb87-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb87-21"><a href="#cb87-21" aria-hidden="true" tabindex="-1"></a> theta_logN_dist <span class="ot">&lt;-</span> post_populDist_logN <span class="sc">|&gt;</span></span>
+<span id="cb87-22"><a href="#cb87-22" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(density, theta)) <span class="sc">|&gt;</span></span>
+<span id="cb87-23"><a href="#cb87-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb87-24"><a href="#cb87-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> density) <span class="sc">+</span></span>
+<span id="cb87-25"><a href="#cb87-25" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="st">"22"</span>) <span class="sc">+</span></span>
+<span id="cb87-26"><a href="#cb87-26" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb87-27"><a href="#cb87-27" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_lineribbon</span>(                              <span class="co"># function designed to use with output from point_interval</span></span>
+<span id="cb87-28"><a href="#cb87-28" aria-hidden="true" tabindex="-1"></a>     <span class="fu">aes</span>(<span class="at">ymin =</span> <span class="fu">after_stat</span>(ymin), <span class="at">ymax =</span> <span class="fu">after_stat</span>(ymax))</span>
+<span id="cb87-29"><a href="#cb87-29" aria-hidden="true" tabindex="-1"></a>     , <span class="at">stat =</span> <span class="st">"summary"</span></span>
+<span id="cb87-30"><a href="#cb87-30" aria-hidden="true" tabindex="-1"></a>     , <span class="at">fun.data =</span> <span class="st">"median_qi"</span></span>
+<span id="cb87-31"><a href="#cb87-31" aria-hidden="true" tabindex="-1"></a>     , <span class="at">color =</span> <span class="st">"black"</span></span>
+<span id="cb87-32"><a href="#cb87-32" aria-hidden="true" tabindex="-1"></a>     , <span class="at">fill =</span> <span class="st">"black"</span></span>
+<span id="cb87-33"><a href="#cb87-33" aria-hidden="true" tabindex="-1"></a>     , <span class="at">alpha =</span> <span class="fl">0.2</span></span>
+<span id="cb87-34"><a href="#cb87-34" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span> </span>
+<span id="cb87-35"><a href="#cb87-35" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(theta[i]), <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> </span>
+<span id="cb87-36"><a href="#cb87-36" aria-hidden="true" tabindex="-1"></a>   papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>post_populDist_logN <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">gather_draws</span>(</span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  fle_logN_bayes</span>
-<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>  , mu_theta, sigma_theta</span>
-<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span>  </span>
-<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">nest</span>(<span class="at">data =</span> <span class="fu">c</span>(.chain, .iteration, .draw)) <span class="sc">|&gt;</span></span>
-<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .variable, <span class="at">values_from =</span> .value) <span class="sc">|&gt;</span></span>
-<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">density =</span> purrr<span class="sc">::</span><span class="fu">map2</span>(                      <span class="co"># iteration of each density function for each pair of mu and sigma</span></span>
-<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>      mu_theta, sigma_theta, </span>
-<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>      \(mu, sigma){</span>
-<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dlnorm</span>(</span>
-<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> <span class="dv">101</span>)</span>
-<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>          , <span class="at">meanlog =</span> mu</span>
-<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a>          , <span class="at">sdlog =</span> sigma</span>
-<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb88-16"><a href="#cb88-16" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb88-17"><a href="#cb88-17" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb88-18"><a href="#cb88-18" aria-hidden="true" tabindex="-1"></a>    ,<span class="at">theta =</span> <span class="fu">list</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> <span class="dv">101</span>))    <span class="co"># corresponsing values on x for plot</span></span>
-<span id="cb88-19"><a href="#cb88-19" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb88-20"><a href="#cb88-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb88-21"><a href="#cb88-21" aria-hidden="true" tabindex="-1"></a> theta_logN_dist <span class="ot">&lt;-</span> post_populDist_logN <span class="sc">|&gt;</span></span>
-<span id="cb88-22"><a href="#cb88-22" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(density, theta)) <span class="sc">|&gt;</span></span>
-<span id="cb88-23"><a href="#cb88-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb88-24"><a href="#cb88-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> density) <span class="sc">+</span></span>
-<span id="cb88-25"><a href="#cb88-25" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="st">"22"</span>) <span class="sc">+</span></span>
-<span id="cb88-26"><a href="#cb88-26" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
-<span id="cb88-27"><a href="#cb88-27" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_lineribbon</span>(                              <span class="co"># function designed to use with output from point_interval</span></span>
-<span id="cb88-28"><a href="#cb88-28" aria-hidden="true" tabindex="-1"></a>     <span class="fu">aes</span>(<span class="at">ymin =</span> <span class="fu">after_stat</span>(ymin), <span class="at">ymax =</span> <span class="fu">after_stat</span>(ymax))</span>
-<span id="cb88-29"><a href="#cb88-29" aria-hidden="true" tabindex="-1"></a>     , <span class="at">stat =</span> <span class="st">"summary"</span></span>
-<span id="cb88-30"><a href="#cb88-30" aria-hidden="true" tabindex="-1"></a>     , <span class="at">fun.data =</span> <span class="st">"median_qi"</span></span>
-<span id="cb88-31"><a href="#cb88-31" aria-hidden="true" tabindex="-1"></a>     , <span class="at">color =</span> <span class="st">"black"</span></span>
-<span id="cb88-32"><a href="#cb88-32" aria-hidden="true" tabindex="-1"></a>     , <span class="at">fill =</span> <span class="st">"black"</span></span>
-<span id="cb88-33"><a href="#cb88-33" aria-hidden="true" tabindex="-1"></a>     , <span class="at">alpha =</span> <span class="fl">0.2</span></span>
-<span id="cb88-34"><a href="#cb88-34" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span> </span>
-<span id="cb88-35"><a href="#cb88-35" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(theta[i]), <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> </span>
-<span id="cb88-36"><a href="#cb88-36" aria-hidden="true" tabindex="-1"></a>   papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>log_normal_caterpillar <span class="sc">+</span> (theta_logN_dist <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(), <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())) <span class="sc">+</span></span>
-<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">width =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), <span class="at">axes =</span> <span class="st">"collect_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>log_normal_caterpillar <span class="sc">+</span> (theta_logN_dist <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(), <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())) <span class="sc">+</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">width =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), <span class="at">axes =</span> <span class="st">"collect_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-posterior-theta-distribution-log-normal" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1735,17 +1631,17 @@ Figure&nbsp;6: Posterior distribution of individual effects <span class="math in
 <section id="bayes-factor-with-unconstrained-model-4" class="level3">
 <h3 class="anchored" data-anchor-id="bayes-factor-with-unconstrained-model-4">Bayes factor with unconstrained model</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>logN_ml <span class="ot">&lt;-</span> <span class="fu">bridge_sampler</span>(fle_logN_bayes, <span class="at">method =</span> <span class="st">"warp3"</span>, <span class="at">repetitions =</span> <span class="dv">30</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(unconstrained_ml, logN_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>logN_ml <span class="ot">&lt;-</span> <span class="fu">bridge_sampler</span>(fle_logN_bayes, <span class="at">method =</span> <span class="st">"warp3"</span>, <span class="at">repetitions =</span> <span class="dv">30</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(unconstrained_ml, logN_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Bayes factor (based on medians of log marginal likelihood estimates)
- in favor of x1 over x2: 240870.03959
-Range of estimates: 235986.27693 to 244494.55543
-Interquartile range: 3304.95089</code></pre>
+ in favor of x1 over x2: 241825.78170
+Range of estimates: 237544.28349 to 245599.75310
+Interquartile range: 3008.00495</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(logN_ml, dominance_ml) <span class="ot">-&gt;</span> bf_logN_dom</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bayes_factor</span>(logN_ml, dominance_ml) <span class="ot">-&gt;</span> bf_logN_dom</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We still find decisive evidence in favor of an unconstrained distribution of <span class="math inline">\(\theta_i\)</span>. As the log-normal model provides a better fit to the data compared to the model assuming a truncated normal distribution for <span class="math inline">\(\theta_i\)</span>, the Bayes factor for the unconstrained model over the log-normal model is approximately 1/287 of the Bayes factor for the unconstrained model over the truncated normal model.</p>
+<p>We still find decisive evidence in favor of an unconstrained distribution of <span class="math inline">\(\theta_i\)</span>. As the log-normal model provides a better fit to the data compared to the model assuming a truncated normal distribution for <span class="math inline">\(\theta_i\)</span>, the Bayes factor for the unconstrained model over the log-normal model is approximately 1/289 of the Bayes factor for the unconstrained model over the truncated normal model.</p>
 </section>
 </section>
 </section>
@@ -1755,30 +1651,30 @@ Interquartile range: 3304.95089</code></pre>
 <h2 class="anchored" data-anchor-id="prior-settings-for-mean-of-theta_i">Prior settings for mean of <span class="math inline">\(\theta_i\)</span></h2>
 <p>To assess the (possible) impact of different prior assumptions on the results of the model comparison, the prior distributions for the mean of <span class="math inline">\(theta_i\)</span> are plotted below. Since the common model assumes one fixed effect shared by all individuals, the prior on the common effect can be understood as a prior on the mean effect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate prior implied for mean of theta_i of truncated normal model</span></span>
-<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>trunc_alpha <span class="ot">&lt;-</span> (<span class="dv">0</span><span class="sc">-</span>mu_prior_truncn)<span class="sc">/</span>sigma_prior_truncn</span>
-<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>trunc_Z <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span><span class="fu">pnorm</span>(trunc_alpha)</span>
-<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>mean_prior_truncn <span class="ot">&lt;-</span> mu_prior_truncn <span class="sc">+</span> sigma_prior_truncn<span class="sc">*</span>(<span class="fu">dnorm</span>(trunc_alpha)<span class="sc">/</span>trunc_Z)</span>
-<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">priors =</span> <span class="fu">c</span>(mu_prior</span>
-<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>                      ,mean_prior_log</span>
-<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>                      ,mean_prior_truncn</span>
-<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>                      ,mu_prior_common)</span>
-<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a>                      ,<span class="at">model =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"unconstrained"</span>,<span class="st">"log-normal"</span>,<span class="st">"truncated normal"</span>,<span class="st">"common"</span>), <span class="at">each =</span> <span class="fl">1e5</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb93-12"><a href="#cb93-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb93-13"><a href="#cb93-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> priors, <span class="at">fill =</span> model) <span class="sc">+</span></span>
-<span id="cb93-14"><a href="#cb93-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lims</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb93-15"><a href="#cb93-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb93-16"><a href="#cb93-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb93-17"><a href="#cb93-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(mu[theta])</span>
-<span id="cb93-18"><a href="#cb93-18" aria-hidden="true" tabindex="-1"></a>    , <span class="at">y =</span> <span class="st">"Density"</span></span>
-<span id="cb93-19"><a href="#cb93-19" aria-hidden="true" tabindex="-1"></a>    , <span class="at">fill =</span> <span class="st">"Prior for"</span></span>
-<span id="cb93-20"><a href="#cb93-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb93-21"><a href="#cb93-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>(<span class="at">option =</span> <span class="st">"B"</span>, <span class="at">begin =</span> <span class="fl">0.1</span>, <span class="at">end =</span> <span class="fl">0.8</span>, <span class="at">aesthetics =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
-<span id="cb93-22"><a href="#cb93-22" aria-hidden="true" tabindex="-1"></a>  papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate prior implied for mean of theta_i of truncated normal model</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>trunc_alpha <span class="ot">&lt;-</span> (<span class="dv">0</span><span class="sc">-</span>mu_prior_truncn)<span class="sc">/</span>sigma_prior_truncn</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>trunc_Z <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span><span class="fu">pnorm</span>(trunc_alpha)</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>mean_prior_truncn <span class="ot">&lt;-</span> mu_prior_truncn <span class="sc">+</span> sigma_prior_truncn<span class="sc">*</span>(<span class="fu">dnorm</span>(trunc_alpha)<span class="sc">/</span>trunc_Z)</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">priors =</span> <span class="fu">c</span>(mu_prior</span>
+<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a>                      ,mean_prior_log</span>
+<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a>                      ,mean_prior_truncn</span>
+<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a>                      ,mu_prior_common)</span>
+<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a>                      ,<span class="at">model =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"unconstrained"</span>,<span class="st">"log-normal"</span>,<span class="st">"truncated normal"</span>,<span class="st">"common"</span>), <span class="at">each =</span> <span class="fl">1e5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> priors, <span class="at">fill =</span> model) <span class="sc">+</span></span>
+<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lims</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(mu[theta])</span>
+<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a>    , <span class="at">y =</span> <span class="st">"Density"</span></span>
+<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a>    , <span class="at">fill =</span> <span class="st">"Prior for"</span></span>
+<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>(<span class="at">option =</span> <span class="st">"B"</span>, <span class="at">begin =</span> <span class="fl">0.1</span>, <span class="at">end =</span> <span class="fl">0.8</span>, <span class="at">aesthetics =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a>  papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 64191 rows containing non-finite outside the scale range
+<pre><code>Warning: Removed 64372 rows containing non-finite outside the scale range
 (`stat_density()`).</code></pre>
 </div>
 <div class="cell-output-display">
@@ -1795,31 +1691,31 @@ Interquartile range: 3304.95089</code></pre>
 <h2 class="anchored" data-anchor-id="prior-settings-for-standard-deviation-of-theta_i">Prior settings for standard deviation of <span class="math inline">\(\theta_i\)</span></h2>
 <p>To assess the (possible) impact of different prior assumptions on the results of the model comparison, the prior distributions for the standard deviation of <span class="math inline">\(theta_i\)</span> are plotted below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate implied prior for sd of theta_i of truncated normal model</span></span>
-<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>sd_prior_truncn <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
-<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>  (sigma_prior_truncn<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span></span>
-<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">1</span> <span class="sc">+</span> trunc_alpha<span class="sc">*</span><span class="fu">dnorm</span>(trunc_alpha)<span class="sc">/</span>trunc_Z <span class="sc">-</span>(<span class="fu">dnorm</span>(trunc_alpha)<span class="sc">/</span>trunc_Z)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">priors =</span> <span class="fu">c</span>(sigma_prior</span>
-<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a>                      ,sd_prior_log</span>
-<span id="cb95-10"><a href="#cb95-10" aria-hidden="true" tabindex="-1"></a>                      ,sd_prior_truncn</span>
-<span id="cb95-11"><a href="#cb95-11" aria-hidden="true" tabindex="-1"></a>                      ,sigma_prior_average)</span>
-<span id="cb95-12"><a href="#cb95-12" aria-hidden="true" tabindex="-1"></a>                      ,<span class="at">model =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"unconstrained"</span>,<span class="st">"log-normal"</span>,<span class="st">"truncated normal"</span>,<span class="st">"average null"</span>), <span class="at">each =</span> <span class="fl">1e5</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb95-13"><a href="#cb95-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb95-14"><a href="#cb95-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> priors, <span class="at">fill =</span> model) <span class="sc">+</span></span>
-<span id="cb95-15"><a href="#cb95-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lims</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb95-16"><a href="#cb95-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb95-17"><a href="#cb95-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb95-18"><a href="#cb95-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(sigma[theta])</span>
-<span id="cb95-19"><a href="#cb95-19" aria-hidden="true" tabindex="-1"></a>    , <span class="at">y =</span> <span class="st">"Density"</span></span>
-<span id="cb95-20"><a href="#cb95-20" aria-hidden="true" tabindex="-1"></a>    , <span class="at">fill =</span> <span class="st">"Prior for"</span></span>
-<span id="cb95-21"><a href="#cb95-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb95-22"><a href="#cb95-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>(<span class="at">option =</span> <span class="st">"G"</span>, <span class="at">begin =</span> <span class="fl">0.1</span>, <span class="at">end =</span> <span class="fl">0.8</span>, <span class="at">aesthetics =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
-<span id="cb95-23"><a href="#cb95-23" aria-hidden="true" tabindex="-1"></a>  papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate implied prior for sd of theta_i of truncated normal model</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>sd_prior_truncn <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>  (sigma_prior_truncn<span class="sc">^</span><span class="dv">2</span>)<span class="sc">*</span></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">1</span> <span class="sc">+</span> trunc_alpha<span class="sc">*</span><span class="fu">dnorm</span>(trunc_alpha)<span class="sc">/</span>trunc_Z <span class="sc">-</span>(<span class="fu">dnorm</span>(trunc_alpha)<span class="sc">/</span>trunc_Z)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">priors =</span> <span class="fu">c</span>(sigma_prior</span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>                      ,sd_prior_log</span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>                      ,sd_prior_truncn</span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>                      ,sigma_prior_average)</span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>                      ,<span class="at">model =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"unconstrained"</span>,<span class="st">"log-normal"</span>,<span class="st">"truncated normal"</span>,<span class="st">"average null"</span>), <span class="at">each =</span> <span class="fl">1e5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> priors, <span class="at">fill =</span> model) <span class="sc">+</span></span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lims</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(sigma[theta])</span>
+<span id="cb94-19"><a href="#cb94-19" aria-hidden="true" tabindex="-1"></a>    , <span class="at">y =</span> <span class="st">"Density"</span></span>
+<span id="cb94-20"><a href="#cb94-20" aria-hidden="true" tabindex="-1"></a>    , <span class="at">fill =</span> <span class="st">"Prior for"</span></span>
+<span id="cb94-21"><a href="#cb94-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb94-22"><a href="#cb94-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_d</span>(<span class="at">option =</span> <span class="st">"G"</span>, <span class="at">begin =</span> <span class="fl">0.1</span>, <span class="at">end =</span> <span class="fl">0.8</span>, <span class="at">aesthetics =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb94-23"><a href="#cb94-23" aria-hidden="true" tabindex="-1"></a>  papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 34414 rows containing non-finite outside the scale range
+<pre><code>Warning: Removed 34538 rows containing non-finite outside the scale range
 (`stat_density()`).</code></pre>
 </div>
 <div class="cell-output-display">
@@ -1831,6 +1727,129 @@ Interquartile range: 3304.95089</code></pre>
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="bayesian-model-comparison" class="level1">
+<h1>Bayesian model comparison</h1>
+<section id="bayes-factor-summary-table" class="level2">
+<h2 class="anchored" data-anchor-id="bayes-factor-summary-table">Bayes factor summary table</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>bfs_base_unc <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">bayes_factor</span>(null_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(average_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(common_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(logN_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">bayes_factor</span>(dominance_ml, unconstrained_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>    , <span class="dv">1</span></span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive posterior probability: naive assumption that prior odds = 1 for all model comparisons</span></span>
+<span id="cb96-10"><a href="#cb96-10" aria-hidden="true" tabindex="-1"></a><span class="co"># -&gt; post prob = bf / sum(bf)</span></span>
+<span id="cb96-11"><a href="#cb96-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-12"><a href="#cb96-12" aria-hidden="true" tabindex="-1"></a>npp_base_unc <span class="ot">&lt;-</span> bfs_base_unc <span class="sc">/</span> <span class="fu">sum</span>(bfs_base_unc) </span>
+<span id="cb96-13"><a href="#cb96-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-14"><a href="#cb96-14" aria-hidden="true" tabindex="-1"></a><span class="co"># model diagnostics</span></span>
+<span id="cb96-15"><a href="#cb96-15" aria-hidden="true" tabindex="-1"></a>rhat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">max</span>(str_post_null<span class="sc">$</span>Rhat)</span>
+<span id="cb96-16"><a href="#cb96-16" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_average<span class="sc">$</span>Rhat)</span>
+<span id="cb96-17"><a href="#cb96-17" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_common<span class="sc">$</span>Rhat)</span>
+<span id="cb96-18"><a href="#cb96-18" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_logN<span class="sc">$</span>Rhat)</span>
+<span id="cb96-19"><a href="#cb96-19" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_dominance<span class="sc">$</span>Rhat)</span>
+<span id="cb96-20"><a href="#cb96-20" aria-hidden="true" tabindex="-1"></a>          ,<span class="fu">max</span>(str_post_unconstrained<span class="sc">$</span>Rhat))</span>
+<span id="cb96-21"><a href="#cb96-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-22"><a href="#cb96-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-23"><a href="#cb96-23" aria-hidden="true" tabindex="-1"></a><span class="co"># bridge sampling CV</span></span>
+<span id="cb96-24"><a href="#cb96-24" aria-hidden="true" tabindex="-1"></a> bridge.cv <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sd</span>(null_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(null_ml<span class="sc">$</span>logml))</span>
+<span id="cb96-25"><a href="#cb96-25" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(average_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(average_ml<span class="sc">$</span>logml))</span>
+<span id="cb96-26"><a href="#cb96-26" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(common_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(common_ml<span class="sc">$</span>logml))</span>
+<span id="cb96-27"><a href="#cb96-27" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(logN_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(logN_ml<span class="sc">$</span>logml))</span>
+<span id="cb96-28"><a href="#cb96-28" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(dominance_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(dominance_ml<span class="sc">$</span>logml))</span>
+<span id="cb96-29"><a href="#cb96-29" aria-hidden="true" tabindex="-1"></a>                ,<span class="fu">sd</span>(unconstrained_ml<span class="sc">$</span>logml)<span class="sc">/</span><span class="fu">abs</span>(<span class="fu">mean</span>(unconstrained_ml<span class="sc">$</span>logml)))</span>
+<span id="cb96-30"><a href="#cb96-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-31"><a href="#cb96-31" aria-hidden="true" tabindex="-1"></a><span class="co"># summary table</span></span>
+<span id="cb96-32"><a href="#cb96-32" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb96-33"><a href="#cb96-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="fu">c</span>(<span class="st">"Null model"</span>, <span class="st">"Average null model"</span>, <span class="st">"Common model"</span>, <span class="st">"Log-normal model"</span>, <span class="st">"Truncated normal model"</span>, <span class="st">"Unconstrained model"</span>)</span>
+<span id="cb96-34"><a href="#cb96-34" aria-hidden="true" tabindex="-1"></a>  , <span class="at">bf =</span> <span class="fu">printnum</span>(bfs_base_unc, <span class="at">format =</span> <span class="st">"e"</span>)</span>
+<span id="cb96-35"><a href="#cb96-35" aria-hidden="true" tabindex="-1"></a>  , <span class="at">npp =</span> <span class="fu">printnum</span>(npp_base_unc, <span class="at">gt1 =</span> F, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb96-36"><a href="#cb96-36" aria-hidden="true" tabindex="-1"></a>  , <span class="at">rhat =</span> <span class="fu">printnum</span>(rhat, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb96-37"><a href="#cb96-37" aria-hidden="true" tabindex="-1"></a>  , <span class="at">cv =</span> <span class="fu">printnum</span>(bridge.cv, <span class="at">format =</span> <span class="st">"e"</span>)</span>
+<span id="cb96-38"><a href="#cb96-38" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb96-39"><a href="#cb96-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Model ($i$)"</span>, <span class="st">"$BF_{i/unconstrained}$"</span>, <span class="st">"NPP"</span>, <span class="st">"max.$</span><span class="sc">\\</span><span class="st">hat{R}$"</span>, <span class="st">"Bridge Sampling CV"</span>)</span>
+<span id="cb96-40"><a href="#cb96-40" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Summary table: Bayes Factors over unconstrained model (=reference model) and naive posterior probability (NPP), based on assumption of equal prior model odds. Maximum <span class="math inline">\(\hat{R}\)</span> and coefficient of variation (CV) for the bridge sampling are also given for each model.</caption>
+<colgroup>
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 6%">
+<col style="width: 15%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model (<span class="math inline">\(i\)</span>)</th>
+<th style="text-align: left;"><span class="math inline">\(BF_{i/unconstrained}\)</span></th>
+<th style="text-align: left;">NPP</th>
+<th style="text-align: left;">max.<span class="math inline">\(\hat{R}\)</span></th>
+<th style="text-align: left;">Bridge Sampling CV</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Null model</td>
+<td style="text-align: left;"><span class="math inline">\(3.25 \times 10^{-33}\)</span></td>
+<td style="text-align: left;">.00</td>
+<td style="text-align: left;">1.000</td>
+<td style="text-align: left;"><span class="math inline">\(4.81 \times 10^{-8}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Average null model</td>
+<td style="text-align: left;"><span class="math inline">\(2.15 \times 10^{-13}\)</span></td>
+<td style="text-align: left;">.00</td>
+<td style="text-align: left;">1.000</td>
+<td style="text-align: left;"><span class="math inline">\(3.35 \times 10^{-6}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common model</td>
+<td style="text-align: left;"><span class="math inline">\(7.22 \times 10^{-13}\)</span></td>
+<td style="text-align: left;">.00</td>
+<td style="text-align: left;">1.000</td>
+<td style="text-align: left;"><span class="math inline">\(2.87 \times 10^{-7}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Log-normal model</td>
+<td style="text-align: left;"><span class="math inline">\(4.14 \times 10^{-6}\)</span></td>
+<td style="text-align: left;">.00</td>
+<td style="text-align: left;">1.000</td>
+<td style="text-align: left;"><span class="math inline">\(2.51 \times 10^{-5}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Truncated normal model</td>
+<td style="text-align: left;"><span class="math inline">\(1.43 \times 10^{-8}\)</span></td>
+<td style="text-align: left;">.00</td>
+<td style="text-align: left;">1.001</td>
+<td style="text-align: left;"><span class="math inline">\(1.19 \times 10^{-4}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Unconstrained model</td>
+<td style="text-align: left;"><span class="math inline">\(1.00\)</span></td>
+<td style="text-align: left;">&gt; .99</td>
+<td style="text-align: left;">1.000</td>
+<td style="text-align: left;"><span class="math inline">\(3.56 \times 10^{-6}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In summary, we find overwhelming evidence for the unconstrained model and the existence of not only flash lag, but also flash lead effects. Given the data at hand, the posterior probability that no one exhibits a flash lead effect is practically zero (with a priori assumption that all models are equally likely).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>bf_dom_null <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">bayes_factor</span>(logN_ml,null_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>                 ,<span class="fu">bayes_factor</span>(dominance_ml, null_ml)<span class="sc">$</span>bf_median_based)</span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>bf_unc_null <span class="ot">&lt;-</span> <span class="fu">bayes_factor</span>(unconstrained_ml, null_ml)<span class="sc">$</span>bf_median_based</span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>av_bf_dom_unc <span class="ot">&lt;-</span> <span class="fu">length</span>(bf_dom_null)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span>(<span class="fu">sum</span>(bf_dom_null)) <span class="sc">/</span> bf_unc_null</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To summarize the results above, we used Bayesian model averaging to compare the unconstrained model with all dominance models collectively. Assuming the unconstrained model and the set of dominance models are equally likely a priori, <span class="math inline">\(BF_{dom/unc} =\)</span> <span class="math inline">\(2.07 \times 10^{-6}\)</span>.<br>
+Thus, the data support the unconstrained model over the set of dominance models by a factor of 481,982.18-to-1.</p>
 </section>
 </section>
 

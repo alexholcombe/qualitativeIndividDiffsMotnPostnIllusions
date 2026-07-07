@@ -1045,57 +1045,6 @@ null_ml <- bridge_sampler(fle_null_bayes, method = "warp3", repetitions = 30, si
 bayes_factor(unconstrained_ml, null_ml)
 ```
 
-# Bayesian model comparison
-
-## Bayes factor summary table
-
-```{r}
-#| label: bf-summary-table
-#| tbl-cap: "Summary table: Bayes Factors over unconstrained model (=reference model) and naive posterior probability (NPP), based on assumption of equal prior model odds. Maximum $\\hat{R}$ and coefficient of variation (CV) for the bridge sampling are also given for each model."
-
-bfs_base_unc <- c(bayes_factor(null_ml, unconstrained_ml)$bf_median_based
-    , bayes_factor(average_ml, unconstrained_ml)$bf_median_based
-    , bayes_factor(common_ml, unconstrained_ml)$bf_median_based
-    , bayes_factor(dominance_ml, unconstrained_ml)$bf_median_based
-    , 1
-    )
-
-# Naive posterior probability: naive assumption that prior odds = 1 for all model comparisons
-# -> post prob = bf / sum(bf)
-
-npp_base_unc <- bfs_base_unc / sum(bfs_base_unc) 
-
-# model diagnostics
-rhat <- c(max(str_post_null$Rhat)
-          ,max(str_post_average$Rhat)
-          ,max(str_post_common$Rhat)
-          ,max(str_post_dominance$Rhat)
-          ,max(str_post_unconstrained$Rhat))
-
-
-# bridge sampling CV
- bridge.cv <- c(sd(null_ml$logml)/abs(mean(null_ml$logml))
-                ,sd(average_ml$logml)/abs(mean(average_ml$logml))
-                ,sd(common_ml$logml)/abs(mean(common_ml$logml))
-                ,sd(dominance_ml$logml)/abs(mean(dominance_ml$logml))
-                ,sd(unconstrained_ml$logml)/abs(mean(unconstrained_ml$logml)))
-
-# summary table
-data.frame(
-  model = c("Null model", "Average null model", "Common model", "Dominance model", "Unconstrained model")
-  , bf = printnum(bfs_base_unc, format = "e")
-  , npp = printnum(npp_base_unc, gt1 = F, digits = 2)
-  , rhat = printnum(rhat, digits = 3)
-  , cv = printnum(bridge.cv, format = "e")
-)  |> knitr::kable(
-  col.names = c("Model ($i$)", "$BF_{i/unconstrained}$", "NPP", "max.$\\hat{R}$", "Bridge Sampling CV")
-)
-
-```
-
-In summary, we find overwhelming evidence for the unconstrained model and the existence of not only flash lag, but also flash lead effects.
-Given the data at hand, the posterior probability that no one exhibits a flash lead effect is practically zero (with a priori assumption that all models are equally likely). 
-
 # Alternative dominance models
 ## Log-normal distributed $\theta_i$
 
@@ -1323,3 +1272,72 @@ data.frame(priors = c(sigma_prior
   papaja::theme_apa(base_size = 16)
    
 ```
+
+# Bayesian model comparison
+
+## Bayes factor summary table
+
+```{r}
+#| label: bf-summary-table
+#| tbl-cap: "Summary table: Bayes Factors over unconstrained model (=reference model) and naive posterior probability (NPP), based on assumption of equal prior model odds. Maximum $\\hat{R}$ and coefficient of variation (CV) for the bridge sampling are also given for each model."
+
+bfs_base_unc <- c(bayes_factor(null_ml, unconstrained_ml)$bf_median_based
+    , bayes_factor(average_ml, unconstrained_ml)$bf_median_based
+    , bayes_factor(common_ml, unconstrained_ml)$bf_median_based
+    , bayes_factor(logN_ml, unconstrained_ml)$bf_median_based
+    , bayes_factor(dominance_ml, unconstrained_ml)$bf_median_based
+    , 1
+    )
+
+# Naive posterior probability: naive assumption that prior odds = 1 for all model comparisons
+# -> post prob = bf / sum(bf)
+
+npp_base_unc <- bfs_base_unc / sum(bfs_base_unc) 
+
+# model diagnostics
+rhat <- c(max(str_post_null$Rhat)
+          ,max(str_post_average$Rhat)
+          ,max(str_post_common$Rhat)
+          ,max(str_post_logN$Rhat)
+          ,max(str_post_dominance$Rhat)
+          ,max(str_post_unconstrained$Rhat))
+
+
+# bridge sampling CV
+ bridge.cv <- c(sd(null_ml$logml)/abs(mean(null_ml$logml))
+                ,sd(average_ml$logml)/abs(mean(average_ml$logml))
+                ,sd(common_ml$logml)/abs(mean(common_ml$logml))
+                ,sd(logN_ml$logml)/abs(mean(logN_ml$logml))
+                ,sd(dominance_ml$logml)/abs(mean(dominance_ml$logml))
+                ,sd(unconstrained_ml$logml)/abs(mean(unconstrained_ml$logml)))
+
+# summary table
+data.frame(
+  model = c("Null model", "Average null model", "Common model", "Log-normal model", "Truncated normal model", "Unconstrained model")
+  , bf = printnum(bfs_base_unc, format = "e")
+  , npp = printnum(npp_base_unc, gt1 = F, digits = 2)
+  , rhat = printnum(rhat, digits = 3)
+  , cv = printnum(bridge.cv, format = "e")
+)  |> knitr::kable(
+  col.names = c("Model ($i$)", "$BF_{i/unconstrained}$", "NPP", "max.$\\hat{R}$", "Bridge Sampling CV")
+)
+
+```
+
+In summary, we find overwhelming evidence for the unconstrained model and the existence of not only flash lag, but also flash lead effects.
+Given the data at hand, the posterior probability that no one exhibits a flash lead effect is practically zero (with a priori assumption that all models are equally likely).
+
+```{r}
+#| label: bf-model-averaging
+
+bf_dom_null <- c(bayes_factor(logN_ml,null_ml)$bf_median_based
+                 ,bayes_factor(dominance_ml, null_ml)$bf_median_based)
+bf_unc_null <- bayes_factor(unconstrained_ml, null_ml)$bf_median_based
+
+av_bf_dom_unc <- length(bf_dom_null)^(-1)*(sum(bf_dom_null)) / bf_unc_null
+
+```
+
+To summarize the results above, we used Bayesian model averaging to compare the unconstrained model with all dominance models collectively.
+Assuming the unconstrained model and the set of dominance models are equally likely a priori, $BF_{dom/unc} =$ `r printnum(av_bf_dom_unc, format = "e")`. \
+Thus, the data support the unconstrained model over the set of dominance models by a factor of `r printnum(av_bf_dom_unc^(-1),format = "f")`-to-1. 
