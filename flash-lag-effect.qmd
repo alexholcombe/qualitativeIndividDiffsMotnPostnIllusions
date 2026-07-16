@@ -176,6 +176,7 @@ unconstrained_joint_prior <- data.frame(mu = mu_prior, sigma = sigma_prior, p_ne
     geom_point(alpha = 0.1) +
     stat_density_2d(color = "white", bins = 10) +
     geom_abline(intercept = 0, slope = 1, color = "white", linetype = "22") +
+    geom_abline(intercept = 0, slope = 0.755, color = "black", linetype = "22") +
     # annotate("point", x = fixef(fle_lmer)[1], y = attr(VarCorr(fle_lmer)$ID, "stddev"), shape = 21, color = "black", fill = "white", size = 5) +
     labs(
       x = expression(mu[theta])
@@ -187,6 +188,25 @@ unconstrained_joint_prior <- data.frame(mu = mu_prior, sigma = sigma_prior, p_ne
     papaja::theme_apa(base_size = 16)
 
 unconstrained_joint_prior
+```
+
+### Coefficient of variation
+
+The truncated normal model for the individual differences $\theta_i$ has a hard constraint on the possible values of the coefficient of variation $\text{CV}_\theta = \sigma_\theta / \mu_\theta$.
+As far as I can tell, $\text{CV}_\theta \in [0, 0.755]$.
+A fair comparison of models with different population distributions, should make similar predictions for parameters of primary interest---in this case the average effect $\mu_\theta$ and the expected individual differences $\sigma_\theta$.
+Hence, it is worth exploring if the implied prior on the coefficient of variation $\text{CV}_\theta$ is largely within the range of possible values of the truncated normal distribution.
+The black dashed line in the above plot marks the upper bound.
+The majority of prior mass is above this bound:
+
+```{r}
+#| label: cv-prop
+
+data.frame(mu = mu_prior, sigma = sigma_prior) |>
+  dplyr::mutate(cv = sigma / mu) |>
+  dplyr::summarise(
+    prop_within_bounds = mean(cv > 0.755)
+  )
 ```
 
 
