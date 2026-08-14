@@ -1364,7 +1364,67 @@ We still find decisive evidence in favor of an unconstrained distribution of $\t
 ## Spike-and-slab distributed $\theta_i$
 
 Another potential distribution is the spike-and-slab distribution. The spike-and-slab distribution is a mixture of two distributions, one of which is a point mass at zero (the spike; no effect) and the other is a continuous distribution (the slab; flash lag or lead effect).
-As before, priors are placed on the mean ($\bar{x}$) and the standard deviation ($s$) of the Gamma distribution.
+As before, priors are placed on the mean ($\bar{x}$) and the standard deviation ($s$) of $\theta_i$, which is assumed to be normally distributed (matching the model assumptions of the unconstrained model without a spike).
+
+$$
+\begin{aligned}
+y_{ij} & \sim \mathcal{N}(\theta_i, \sigma_\epsilon) \\ 
+\sigma_\epsilon^2 & \propto 1/\sigma_\epsilon^2 \\ \\
+
+(1)~\theta_i|(z_i=1)&~ \sim \mathcal{N}(\mu_\theta, \sigma_\theta) \\ \\
+&~\mu_\theta \sim \log \mathcal{N}(a_\mu, b_\mu) \\ 
+&~\sigma_\theta = -\mu_\theta / \Phi^{-1}(0.5 \; p(\theta_i<0)) \\
+&~p(\theta_i<0) = \Phi(p^{*}_{\theta_i<0}) \\
+&~p^{*}(\theta_i<0) \sim \mathcal{N}(a_p, b_p) \\ \\
+(2)~\theta_i|(z_i=0)&~ = 0
+\end{aligned}
+$$
+In this model $\omega$ is the spike weight, i.e. the proportion of non-responders with an $\theta_i = 0$. p_negative_slab is conceptualized as the proportion of non-responders and the proportion of negative effects, i.e. $P(\theta_i \le 0) = \omega + P(\theta_i <0)$. 
+
+```{r}
+#| label: prior-spike-and-slab 
+
+p_negative_slab_prior <- rnorm(1e5, mean = -2/3, sd = 2/3) |>
+  pnorm() |>
+  (\(x) x / 2)()
+
+omega_prior <- rnorm(1e5, mean = 0, sd = 0.5) |>
+  pnorm() |>
+  (\(x) p_negative_slab_prior*x)()
+
+p_negative_slab_prior |>
+  logspline::logspline(lbound = 0, ubound = 0.5) |>
+  (
+    \(fit) {
+      curve(
+        logspline::dlogspline(x, fit)
+        , from = 0, to = 0.5
+        , lwd = 2
+        , xlab = expression(p[theta[i] <= 0])
+        , ylab = "Density"
+        , las = 1
+        , n = 1001
+      )
+    }
+  )()
+
+omega_prior |>
+  logspline::logspline(lbound = 0, ubound = 0.5) |>
+  (
+    \(fit) {
+      curve(
+        logspline::dlogspline(x, fit)
+        , from = 0, to = 0.5
+        , lwd = 2
+        , xlab = expression(omega)
+        , ylab = "Density"
+        , las = 1
+        , n = 1001
+      )
+    }
+  )()
+```
+
 
 ```{r}
 #| label: fit-spike-and-slab-model
@@ -1381,8 +1441,8 @@ fle_stan_unconstrained_spike_data <- list(
   # Prior settings
   , mu_theta_mean = 0.5
   , mu_theta_sd = 1
-  , pi_mean = 0.5
-  , pi_sd = 1
+  , pi_mean = -2/3
+  , pi_sd = 2/3
   , omega_mean = 0
   , omega_sd = 0.5
 )
@@ -1405,7 +1465,7 @@ check_hmc_diagnostics(fle_unconstrained_spike_bayes)
 ```{r}
 #| label: spike-slab-posteriors
 
-posterior_population_parameters <- tidybayes::gather_draws(
+post_populPara_spike <- tidybayes::gather_draws(
   fle_unconstrained_spike_bayes
   , mu_theta, sigma_theta, p_negative_theta, omega
 ) |>
@@ -1413,11 +1473,11 @@ posterior_population_parameters <- tidybayes::gather_draws(
     .variable = factor(
       .variable
       , levels = c("mu_theta", "sigma_theta", "p_negative_theta", "omega")
-      , labels = c("mu[theta]", "sigma[theta]", "p(theta[i] <= 0)", "p(theta[i] == 0 | p(theta[i] <= 0))")
+      , labels = c("mu[theta]", "sigma[theta]", "p(theta[i] <= 0)", "p(theta[i] == 0*' | '*p(theta[i] <= 0))")
     )
   )
 
-(posterior_population_parameters |>
+(post_populPara_spike |>
   ggplot() +
   aes(x = .value, fill = after_stat(level)) +
   stat_halfeye(fill_type = "segments", normalize = "panels", .width = c(.5, .8, .95, .99, 1), slab_color = "black", alpha = 0.7, fatten_point = 2, interval_size_range = c(1, 2)) +
@@ -1438,7 +1498,7 @@ posterior_population_parameters <- tidybayes::gather_draws(
     ~ .variable
     , scales = "free"
     , labeller = label_parsed
-    , ncol = 2
+    , ncol = 3
   ) +
   labs(x = "Parameter value") +
   papaja::theme_apa(base_size = 16) +
@@ -1453,16 +1513,39 @@ posterior_population_parameters <- tidybayes::gather_draws(
 ```
 
 ```{r}
+#| label: tbl-compare-estimates-spike
+#| tbl-cap: "Comparison of Bayesian posterior means of the spike model and MLE estimates."
+
+data.frame(
+  parameter = c("mu_theta", "sigma_theta", "sigma_epsilon", "P(theta_i < 0)", "P(theta_i <= 0)", "P(theta_i = 0)")
+  , spike = fle_spike_test_bayes |>
+    summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta", "p_negative_spike", "omega")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+    dplyr::pull("mean")
+  , mle = c(
+    fixef(fle_lmer)[1],
+    attr(VarCorr(fle_lmer)$ID, "stddev"),
+    sigma(fle_lmer),
+    mle_p_negative,
+    mle_p_negative, 
+    0
+  )
+) |>
+  knitr::kable()
+```
+
+```{r}
 #| label: joint-posterior-spike-slab
 
-posterior_population_parameters |>
-  dplyr::filter(.variable %in% c("p(theta[i] <= 0)", "p(theta[i] == 0 | p(theta[i] <= 0))")) |>
+post_populPara_spike |>
+  dplyr::filter(.variable %in% c("p(theta[i] <= 0)", "p(theta[i] == 0*' | '*p(theta[i] <= 0))")) |>
   tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
   dplyr::mutate(
-    `p(theta[i] == 0)` = `p(theta[i] <= 0)` * `p(theta[i] == 0 | p(theta[i] <= 0))`
+    `p(theta[i] == 0)` = `p(theta[i] <= 0)` * `p(theta[i] == 0*' | '*p(theta[i] <= 0))`
   ) |>
   ggplot() +
-    aes(x = `p(theta[i] <= 0)`, y = `p(theta[i] == 0 | p(theta[i] <= 0))`, color = `p(theta[i] == 0)`) +
+    aes(x = `p(theta[i] <= 0)`, y = `p(theta[i] == 0*' | '*p(theta[i] <= 0))`, color = `p(theta[i] == 0)`) +
     geom_point(alpha = 0.1) +
     stat_density_2d(color = "white", bins = 10) +
     geom_abline(intercept = 0, slope = 1, color = "white", linetype = "22") +
@@ -1558,6 +1641,31 @@ data.frame(priors = c(sigma_prior
   papaja::theme_apa(base_size = 16)
    
 ```
+
+## Reparameterization of truncated normal
+
+```{r}
+ #| label: truncated-transformation
+
+# Testing whether currently implied prior for CV = s/m is in bounds of 0 < CV < sqrt(pi/2-1)
+
+cv_trunc_prior <- data.frame(cv = sd_prior_truncn/mean_prior_truncn) 
+max(cv_trunc_prior) <= sqrt(pi/2-1)
+cv_trunc_prior|>
+  ggplot() +
+  aes(x = cv) +
+  lims(x = c(0,5)) +
+  geom_histogram() +
+  labs(
+    x = "Implied CV of truncated normal"
+    , y = "Density"
+  ) +
+  geom_vline(xintercept = sqrt(pi/2-1), color = "red", linetype = 1) +
+  papaja::theme_apa(base_size = 16)
+
+
+```
+
 
 # Bayesian model comparison
 
