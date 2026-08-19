@@ -1208,7 +1208,8 @@ We still find decisive evidence in favor of an unconstrained distribution of $\t
 ## Gamma distributed $\theta_i$
 
 Another potential distribution is the Gamma distribution.
-As before, priors are placed on the mean ($\bar{x}$) and the standard deviation ($s$) of the Gamma distribution.
+As before, priors are placed on the mean ($\bar{x}$) and the standard deviation ($s$) of the Gamma distribution.\
+The inverse Gamma or special cases of the Gamma distribution (where restrictions have been placed on $\alpha$ and $\beta$) could be considered in future research. Regarding the latter option, at this early stage of modeling the FLE the Gamma function was chosen for its greater flexibility. Though it should be noted that the Gamma model could also be sanctioned for this flexibility, should a specific case be the better fit. 
 
 $$
 \begin{aligned}
