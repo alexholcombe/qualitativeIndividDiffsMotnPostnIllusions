@@ -40,8 +40,10 @@ library("lme4")
 library("rstan")
 ```
 
+# Validation of unconstrained model
+
 ```{r}
-#| label: simulate-data
+#| label: simulate-data-unconstrained
 
 # Simulation parameters
 sigma_epsilon <- 1
@@ -216,3 +218,123 @@ data.frame(
 ) |>
   knitr::kable()
 ```
+
+# Validation of log-normal model
+
+```{r}
+#| label: log-normal-data simulation
+
+# Simulate data
+
+sigma_epsilon <- 1
+mu_theta <- 1.2
+sigma_theta <- 1
+
+n_subjects <- 85
+n_trials <- 200
+id <- rep(1:n_subjects, each = n_trials)
+
+set.seed(123)
+theta <- rlnorm(n_subjects, meanlog = mu_theta, sdlog = sigma_theta)
+y <- rnorm(n_subjects*n_trials, mean = theta[id], sd = sigma_epsilon)
+
+sim_data_logN <- data.frame(id = id, y = y)
+
+# Visualize data
+
+theta |> as.data.frame() |>
+  ggplot(aes(x = theta)) +
+  geom_histogram(bins = 15, color = "black", fill = "lightblue") +
+  labs(title = "Histogram of Theta", x = "Theta", y = "Count")
+
+sim_data_logN |>
+  dplyr::summarize(
+    mean_y = mean(y)
+    , .by = id
+  ) |>
+  ggplot(aes(x = mean_y)) +
+  geom_histogram(bins = 15, color = "black", fill = "lightblue") +
+  labs(title = "Histogram of Subject Means", x = "Mean Y", y = "Count")
+```
+
+```{r}
+#| label: log-normal-model-validation
+
+# Testing model 
+
+stan_model <- readLines("./models/pse-dominance-alternative.stan") |>
+  paste(collapse = "\n")
+
+logN_data <- list(
+  N = as.integer(n_subjects*n_trials)
+  , n_subjects = as.integer(n_subjects)
+  , id = as.integer(id)
+  , y = y
+  
+  , condition = 0
+  
+  # Prior settings
+  , mean_prior_mu = 1.75
+  , mean_prior_sigma = 0.25
+  , sd_prior_mu = 2
+  , sd_prior_sigma = 0.25
+)
+
+fit_logN_joint <- rstan::stan(
+  model_code = stan_model
+  , data = logN_data
+  , iter = 11000
+  , warmup = 1000
+  , chains = 4
+  , seed = 123
+)
+
+# Calculate original logN model for comparison
+
+old_logN_model <- readLines("./models/pse-dominance-logN.stan") |>
+  paste(collapse = "\n")
+
+logN_data_old <- list(
+  N = as.integer(n_subjects*n_trials)
+  , n_subjects = as.integer(n_subjects)
+  , id = as.integer(id)
+  , y = y
+  
+  # Prior settings
+  , mean_logN_mu = 1.75
+  , mean_logN_sigma = 0.25
+  , sd_logN_mu = 2
+  , sd_logN_sigma = 0.25
+)
+
+fit_logN_old <- rstan::stan(
+  model_code = old_logN_model
+  , data = logN_data_old
+  , iter = 11000
+  , warmup = 1000
+  , chains = 4
+  , seed = 123
+)
+```
+
+```{r}
+#| label: comparison-table-logN
+
+# Comparison
+
+data.frame(
+ parameter = c("mu_theta", "sigma_theta","sigma_epsilon")
+ , truth = c(mu_theta, sigma_theta, sigma_epsilon)
+ ,bayes_joint_model = fit_logN_joint |>
+    summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+    dplyr::pull("mean")
+ , bayes_logN_only = fit_logN_old |>
+   summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+   dplyr::pull("mean")
+)
+```
+

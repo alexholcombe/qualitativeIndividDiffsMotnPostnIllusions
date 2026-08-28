@@ -2,15 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Frederik Aust">
-<meta name="dcterms.date" content="2026-01-08">
+<meta name="dcterms.date" content="2026-08-28">
 
 <title>Validation of Unconstrained Model for PSE</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -63,15 +66,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="model-validation_files/libs/clipboard/clipboard.min.js"></script>
 <script src="model-validation_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="model-validation_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="model-validation_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="model-validation_files/libs/quarto-html/popper.min.js"></script>
 <script src="model-validation_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="model-validation_files/libs/quarto-html/anchor.min.js"></script>
 <link href="model-validation_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="model-validation_files/libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="model-validation_files/libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="model-validation_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="model-validation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="model-validation_files/libs/bootstrap/bootstrap-71b362005720d8f9d0d6c5f12c38138c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="model-validation_files/libs/bootstrap/bootstrap-533b9d59e1ad3528d7dbe39b382a021c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -79,8 +81,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body class="quarto-light">
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-  
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#validation-of-unconstrained-model" id="toc-validation-of-unconstrained-model" class="nav-link active" data-scroll-target="#validation-of-unconstrained-model">Validation of unconstrained model</a></li>
+  <li><a href="#validation-of-log-normal-model" id="toc-validation-of-log-normal-model" class="nav-link" data-scroll-target="#validation-of-log-normal-model">Validation of log-normal model</a></li>
+  </ul>
+</nav>
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -110,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 8, 2026</p>
+      <p class="date">August 28, 2026</p>
     </div>
   </div>
   
@@ -126,15 +135,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
-Attaching package: 'dplyr'</code></pre>
+Attache Paket: 'dplyr'</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:stats':
+<pre><code>Die folgenden Objekte sind maskiert von 'package:stats':
 
     filter, lag</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:base':
+<pre><code>Die folgenden Objekte sind maskiert von 'package:base':
 
     intersect, setdiff, setequal, union</code></pre>
 </div>
@@ -142,11 +151,11 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lme4"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: Matrix</code></pre>
+<pre><code>Lade nötiges Paket: Matrix</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"rstan"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: StanHeaders</code></pre>
+<pre><code>Lade nötiges Paket: StanHeaders</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
@@ -161,47 +170,52 @@ For within-chain threading using `reduce_sum()` or `map_rect()` Stan functions,
 change `threads_per_chain` option:
 rstan_options(threads_per_chain = 1)</code></pre>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Do not specify '-march=native' in 'LOCAL_CPPFLAGS' or a Makevars file</code></pre>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sigma_epsilon <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>p_negative_theta <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>mu_theta <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">85</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">200</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Derived parameters</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>sigma_theta <span class="ot">&lt;-</span> <span class="sc">-</span>mu_theta <span class="sc">/</span> <span class="fu">qnorm</span>(p_negative_theta)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_subjects, <span class="at">each =</span> n_trials)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_subjects, <span class="at">mean =</span> mu_theta, <span class="at">sd =</span> sigma_theta)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_subjects <span class="sc">*</span> n_trials, <span class="at">mean =</span> theta[id], <span class="at">sd =</span> sigma_epsilon)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<section id="validation-of-unconstrained-model" class="level1">
+<h1>Validation of unconstrained model</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> id,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> y</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sigma_epsilon <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>p_negative_theta <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>mu_theta <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sim_data<span class="sc">$</span>y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">85</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Derived parameters</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>sigma_theta <span class="ot">&lt;-</span> <span class="sc">-</span>mu_theta <span class="sc">/</span> <span class="fu">qnorm</span>(p_negative_theta)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_subjects, <span class="at">each =</span> n_trials)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_subjects, <span class="at">mean =</span> mu_theta, <span class="at">sd =</span> sigma_theta)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_subjects <span class="sc">*</span> n_trials, <span class="at">mean =</span> theta[id], <span class="at">sd =</span> sigma_epsilon)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> id,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> y</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sim_data<span class="sc">$</span>y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.025385</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(sim_data<span class="sc">$</span>y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(sim_data<span class="sc">$</span>y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.454526</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sim_data <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_y =</span> <span class="fu">mean</span>(y)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.by =</span> id</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_y)) <span class="sc">+</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Subject Means"</span>, <span class="at">x =</span> <span class="st">"Mean Y"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sim_data <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_y =</span> <span class="fu">mean</span>(y)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.by =</span> id</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_y)) <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Subject Means"</span>, <span class="at">x =</span> <span class="st">"Mean Y"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-plot-data" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
 <figure class="quarto-float quarto-float-fig figure">
@@ -216,33 +230,33 @@ Figure&nbsp;1
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lmer_fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> sim_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>lmer_fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> sim_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mle_p_negative <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">q =</span> <span class="dv">0</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean =</span> <span class="fu">fixef</span>(lmer_fit)[<span class="dv">1</span>]</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd =</span> <span class="fu">attr</span>(<span class="fu">VarCorr</span>(lmer_fit)<span class="sc">$</span>id, <span class="st">"stddev"</span>)</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>mle_p_negative</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mle_p_negative <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">q =</span> <span class="dv">0</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean =</span> <span class="fu">fixef</span>(lmer_fit)[<span class="dv">1</span>]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd =</span> <span class="fu">attr</span>(<span class="fu">VarCorr</span>(lmer_fit)<span class="sc">$</span>id, <span class="st">"stddev"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>mle_p_negative</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1669242</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>p_negative <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fl">1e5</span>, <span class="at">mean =</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>, <span class="at">sd =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pnorm</span>(<span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  (\(x) x <span class="sc">/</span> <span class="dv">2</span>)()</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  p_negative</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  , <span class="at">breaks =</span> <span class="dv">50</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  , <span class="at">main =</span> <span class="st">"Prior Distribution for PSE"</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">xlab =</span> <span class="st">"PSE"</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  , <span class="at">col =</span> <span class="st">"lightblue"</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  , <span class="at">border =</span> <span class="st">"black"</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>p_negative <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fl">1e5</span>, <span class="at">mean =</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>, <span class="at">sd =</span> <span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pnorm</span>(<span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  (\(x) x <span class="sc">/</span> <span class="dv">2</span>)()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  p_negative</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  , <span class="at">breaks =</span> <span class="dv">50</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  , <span class="at">main =</span> <span class="st">"Prior Distribution for PSE"</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">xlab =</span> <span class="st">"PSE"</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  , <span class="at">col =</span> <span class="st">"lightblue"</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  , <span class="at">border =</span> <span class="st">"black"</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -250,11 +264,11 @@ Figure&nbsp;1
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dlnorm</span>(x, <span class="at">meanlog =</span> <span class="dv">1</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">5</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dlnorm</span>(x, <span class="at">meanlog =</span> <span class="dv">1</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">5</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -262,22 +276,22 @@ Figure&nbsp;1
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">rlnorm</span>(<span class="fl">1e5</span>, <span class="at">meanlog =</span> <span class="dv">1</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="sc">-</span>mu <span class="sc">/</span> <span class="fu">qnorm</span>(p_negative)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">mu =</span> mu, <span class="at">sigma =</span> sigma, <span class="at">p_negative =</span> p_negative) <span class="sc">|&gt;</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> mu, <span class="at">y =</span> sigma, <span class="at">color =</span> p_negative) <span class="sc">+</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_density_2d</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">expression</span>(mu[theta])</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>      , <span class="at">y =</span> <span class="fu">expression</span>(sigma[theta])</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      , <span class="at">color =</span> <span class="fu">expression</span>(<span class="fu">p</span>(theta <span class="sc">&lt;</span> <span class="dv">0</span>))</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>(<span class="at">option =</span> <span class="st">"C"</span>) <span class="sc">+</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lims</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">rlnorm</span>(<span class="fl">1e5</span>, <span class="at">meanlog =</span> <span class="dv">1</span>, <span class="at">sdlog =</span> <span class="dv">1</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="sc">-</span>mu <span class="sc">/</span> <span class="fu">qnorm</span>(p_negative)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">mu =</span> mu, <span class="at">sigma =</span> sigma, <span class="at">p_negative =</span> p_negative) <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> mu, <span class="at">y =</span> sigma, <span class="at">color =</span> p_negative) <span class="sc">+</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_density_2d</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">expression</span>(mu[theta])</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>      , <span class="at">y =</span> <span class="fu">expression</span>(sigma[theta])</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>      , <span class="at">color =</span> <span class="fu">expression</span>(<span class="fu">p</span>(theta <span class="sc">&lt;</span> <span class="dv">0</span>))</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>(<span class="at">option =</span> <span class="st">"C"</span>) <span class="sc">+</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lims</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    papaja<span class="sc">::</span><span class="fu">theme_apa</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 33183 rows containing non-finite outside the scale range
 (`stat_density2d()`).</code></pre>
@@ -295,75 +309,105 @@ Figure&nbsp;1
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>stan_model <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"./models/pse-unconstrained.stan"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>stan_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">as.integer</span>(n_subjects <span class="sc">*</span> n_trials)</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  , <span class="at">n_subjects =</span> <span class="fu">as.integer</span>(n_subjects)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  , <span class="at">id =</span> <span class="fu">as.integer</span>(id)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  , <span class="at">y =</span> y</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prior settings</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mu_theta_mean =</span> <span class="dv">1</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mu_theta_sd =</span> <span class="dv">1</span></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  , <span class="at">pi_mean =</span> <span class="sc">-</span><span class="fl">0.5</span></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  , <span class="at">pi_sd =</span> <span class="fl">0.5</span></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> stan_model</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  , <span class="at">data =</span> stan_data</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  , <span class="at">iter =</span> <span class="dv">2000</span></span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  , <span class="at">warmup =</span> <span class="dv">1000</span></span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  , <span class="at">chains =</span> <span class="dv">4</span></span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  , <span class="at">cores =</span> <span class="dv">4</span></span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seed =</span> <span class="dv">123</span></span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  , <span class="at">init =</span> <span class="fu">list</span>(</span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">1</span></span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="dv">1</span></span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="dv">1</span></span>
-<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
-<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">list</span>(</span>
-<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">1</span></span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="fl">0.5</span></span>
-<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="fl">0.5</span></span>
-<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
-<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">list</span>(</span>
-<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">2</span></span>
-<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="dv">2</span></span>
-<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="dv">2</span></span>
-<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
-<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">list</span>(</span>
-<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">1</span></span>
-<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="dv">1</span></span>
-<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="dv">1</span></span>
-<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
-<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>stan_model <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"./models/pse-unconstrained.stan"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>stan_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">as.integer</span>(n_subjects <span class="sc">*</span> n_trials)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  , <span class="at">n_subjects =</span> <span class="fu">as.integer</span>(n_subjects)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  , <span class="at">id =</span> <span class="fu">as.integer</span>(id)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  , <span class="at">y =</span> y</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prior settings</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mu_theta_mean =</span> <span class="dv">1</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mu_theta_sd =</span> <span class="dv">1</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  , <span class="at">pi_mean =</span> <span class="sc">-</span><span class="fl">0.5</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  , <span class="at">pi_sd =</span> <span class="fl">0.5</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> stan_model</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  , <span class="at">data =</span> stan_data</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  , <span class="at">iter =</span> <span class="dv">2000</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  , <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>  , <span class="at">chains =</span> <span class="dv">4</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  , <span class="at">cores =</span> <span class="dv">4</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  , <span class="at">init =</span> <span class="fu">list</span>(</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">1</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="dv">1</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="dv">1</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">list</span>(</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">1</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="fl">0.5</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="fl">0.5</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">list</span>(</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">2</span></span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="dv">2</span></span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="dv">2</span></span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">list</span>(</span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">mu_theta =</span> <span class="dv">1</span></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma_theta =</span> <span class="dv">1</span></span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a>      , <span class="at">sigma2_epsilon =</span> <span class="dv">1</span></span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>      , <span class="at">theta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_subjects)</span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: Rtools is required to build R packages, but is not currently installed.
+
+Please download and install the appropriate version of Rtools for 4.6.1 from
+https://cran.r-project.org/bin/windows/Rtools/.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Trying to compile a simple C file</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running "C:/PROGRA~1/R/R-46~1.1/bin/x64/Rcmd.exe" SHLIB foo.c
+using C compiler: 'gcc.exe (GCC) 14.2.0'
+gcc  -I"C:/PROGRA~1/R/R-46~1.1/include" -DNDEBUG   -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/Rcpp/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/unsupported"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/BH/include" -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/src/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppParallel/include/" -DRCPP_PARALLEL_USE_TBB=1 -DTBB_INTERFACE_NEW -IC:/Users/METHEX~1/AppData/Local/R/WIN-LI~1/4.6/RCPPPA~1/include -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS  -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -D_HAS_AUTO_PTR_ETC=0  -include "C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/stan/math/prim/fun/Eigen.hpp"  -std=c++1y    -I"C:/rtools45/x86_64-w64-mingw32.static.posix/include"      -O2 -Wall -std=gnu2x  -mfpmath=sse -msse2 -mstackrealign   -c foo.c -o foo.o
+cc1.exe: warning: command-line option '-std=c++14' is valid for C++/ObjC++ but not for C
+In file included from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/Core:19,
+                 from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/Dense:1,
+                 from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22,
+                 from &lt;command-line&gt;:
+C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/src/Core/util/Macros.h:679:10: fatal error: cmath: No such file or directory
+  679 | #include &lt;cmath&gt;
+      |          ^~~~~~~
+compilation terminated.
+make: *** [C:/PROGRA~1/R/R-46~1.1/etc/x64/Makeconf:297: foo.o] Error 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: Rtools is required to build R packages, but is not currently installed.
+
+Please download and install the appropriate version of Rtools for 4.6.1 from
+https://cran.r-project.org/bin/windows/Rtools/.</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">parameter =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>, <span class="st">"sigma_epsilon"</span>, <span class="st">"p_negative_theta"</span>)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">truth =</span> <span class="fu">c</span>(mu_theta, sigma_theta, sigma_epsilon, p_negative_theta)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">bayes =</span> fit <span class="sc">|&gt;</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(<span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>, <span class="st">"sigma_epsilon"</span>, <span class="st">"p_negative_theta"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    (\(x) x<span class="sc">$</span>summary)() <span class="sc">|&gt;</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="st">"mean"</span>)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mle =</span> <span class="fu">c</span>(</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fixef</span>(lmer_fit)[<span class="dv">1</span>],</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">attr</span>(<span class="fu">VarCorr</span>(lmer_fit)<span class="sc">$</span>id, <span class="st">"stddev"</span>),</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sigma</span>(lmer_fit),</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    mle_p_negative</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">parameter =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>, <span class="st">"sigma_epsilon"</span>, <span class="st">"p_negative_theta"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  , <span class="at">truth =</span> <span class="fu">c</span>(mu_theta, sigma_theta, sigma_epsilon, p_negative_theta)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  , <span class="at">bayes =</span> fit <span class="sc">|&gt;</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(<span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>, <span class="st">"sigma_epsilon"</span>, <span class="st">"p_negative_theta"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    (\(x) x<span class="sc">$</span>summary)() <span class="sc">|&gt;</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="st">"mean"</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mle =</span> <span class="fu">c</span>(</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fixef</span>(lmer_fit)[<span class="dv">1</span>],</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">attr</span>(<span class="fu">VarCorr</span>(lmer_fit)<span class="sc">$</span>id, <span class="st">"stddev"</span>),</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sigma</span>(lmer_fit),</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    mle_p_negative</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <thead>
@@ -378,31 +422,423 @@ Figure&nbsp;1
 <tr class="odd">
 <td style="text-align: left;">mu_theta</td>
 <td style="text-align: right;">1.000000</td>
-<td style="text-align: right;">1.0253035</td>
+<td style="text-align: right;">1.0375481</td>
 <td style="text-align: right;">1.0253847</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">sigma_theta</td>
 <td style="text-align: right;">1.188183</td>
-<td style="text-align: right;">1.0631598</td>
+<td style="text-align: right;">1.0647653</td>
 <td style="text-align: right;">1.0610452</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sigma_epsilon</td>
 <td style="text-align: right;">1.000000</td>
-<td style="text-align: right;">1.0014303</td>
+<td style="text-align: right;">1.0014602</td>
 <td style="text-align: right;">1.0015025</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">p_negative_theta</td>
 <td style="text-align: right;">0.200000</td>
-<td style="text-align: right;">0.1680185</td>
+<td style="text-align: right;">0.1654512</td>
 <td style="text-align: right;">0.1669242</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+</section>
+<section id="validation-of-log-normal-model" class="level1">
+<h1>Validation of log-normal model</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>sigma_epsilon <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>mu_theta <span class="ot">&lt;-</span> <span class="fl">1.2</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>sigma_theta <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">85</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_subjects, <span class="at">each =</span> n_trials)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">rlnorm</span>(n_subjects, <span class="at">meanlog =</span> mu_theta, <span class="at">sdlog =</span> sigma_theta)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_subjects<span class="sc">*</span>n_trials, <span class="at">mean =</span> theta[id], <span class="at">sd =</span> sigma_epsilon)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>sim_data_logN <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> id, <span class="at">y =</span> y)</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize data</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>theta <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta)) <span class="sc">+</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Theta"</span>, <span class="at">x =</span> <span class="st">"Theta"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="model-validation_files/figure-html/log-normal-data%20simulation-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>sim_data_logN <span class="sc">|&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_y =</span> <span class="fu">mean</span>(y)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    , <span class="at">.by =</span> id</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_y)) <span class="sc">+</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Subject Means"</span>, <span class="at">x =</span> <span class="st">"Mean Y"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="model-validation_files/figure-html/log-normal-data%20simulation-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing model </span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>stan_model <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"./models/pse-dominance-alternative.stan"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>logN_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">as.integer</span>(n_subjects<span class="sc">*</span>n_trials)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  , <span class="at">n_subjects =</span> <span class="fu">as.integer</span>(n_subjects)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">id =</span> <span class="fu">as.integer</span>(id)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  , <span class="at">y =</span> y</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  , <span class="at">condition =</span> <span class="dv">0</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prior settings</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_prior_mu =</span> <span class="fl">1.75</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_prior_sigma =</span> <span class="fl">0.25</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_prior_mu =</span> <span class="dv">2</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_prior_sigma =</span> <span class="fl">0.25</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>fit_logN_joint <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> stan_model</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>  , <span class="at">data =</span> logN_data</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>  , <span class="at">iter =</span> <span class="dv">11000</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>  , <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>  , <span class="at">chains =</span> <span class="dv">4</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: Rtools is required to build R packages, but is not currently installed.
+
+Please download and install the appropriate version of Rtools for 4.6.1 from
+https://cran.r-project.org/bin/windows/Rtools/.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Trying to compile a simple C file</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running "C:/PROGRA~1/R/R-46~1.1/bin/x64/Rcmd.exe" SHLIB foo.c
+using C compiler: 'gcc.exe (GCC) 14.2.0'
+gcc  -I"C:/PROGRA~1/R/R-46~1.1/include" -DNDEBUG   -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/Rcpp/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/unsupported"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/BH/include" -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/src/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppParallel/include/" -DRCPP_PARALLEL_USE_TBB=1 -DTBB_INTERFACE_NEW -IC:/Users/METHEX~1/AppData/Local/R/WIN-LI~1/4.6/RCPPPA~1/include -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS  -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -D_HAS_AUTO_PTR_ETC=0  -include "C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/stan/math/prim/fun/Eigen.hpp"  -std=c++1y    -I"C:/rtools45/x86_64-w64-mingw32.static.posix/include"      -O2 -Wall -std=gnu2x  -mfpmath=sse -msse2 -mstackrealign   -c foo.c -o foo.o
+cc1.exe: warning: command-line option '-std=c++14' is valid for C++/ObjC++ but not for C
+In file included from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/Core:19,
+                 from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/Dense:1,
+                 from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22,
+                 from &lt;command-line&gt;:
+C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/src/Core/util/Macros.h:679:10: fatal error: cmath: No such file or directory
+  679 | #include &lt;cmath&gt;
+      |          ^~~~~~~
+compilation terminated.
+make: *** [C:/PROGRA~1/R/R-46~1.1/etc/x64/Makeconf:297: foo.o] Error 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: Rtools is required to build R packages, but is not currently installed.
+
+Please download and install the appropriate version of Rtools for 4.6.1 from
+https://cran.r-project.org/bin/windows/Rtools/.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.00041 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.1 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 1: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 1: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 1: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 1: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 1: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 1: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 1: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 1: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 1: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 1: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 1: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 5.204 seconds (Warm-up)
+Chain 1:                15.31 seconds (Sampling)
+Chain 1:                20.514 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 0.000165 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 1.65 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 2: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 2: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 2: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 2: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 2: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 2: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 2: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 2: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 2: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 2: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 2: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 4.772 seconds (Warm-up)
+Chain 2:                26.37 seconds (Sampling)
+Chain 2:                31.142 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 0.000118 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 1.18 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 3: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 3: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 3: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 3: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 3: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 3: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 3: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 3: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 3: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 3: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 3: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 5.3 seconds (Warm-up)
+Chain 3:                18.576 seconds (Sampling)
+Chain 3:                23.876 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 0.000131 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 1.31 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 4: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 4: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 4: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 4: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 4: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 4: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 4: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 4: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 4: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 4: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 4: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 6.839 seconds (Warm-up)
+Chain 4:                20.057 seconds (Sampling)
+Chain 4:                26.896 seconds (Total)
+Chain 4: </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate original logN model for comparison</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>old_logN_model <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"./models/pse-dominance-logN.stan"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>logN_data_old <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">as.integer</span>(n_subjects<span class="sc">*</span>n_trials)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  , <span class="at">n_subjects =</span> <span class="fu">as.integer</span>(n_subjects)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  , <span class="at">id =</span> <span class="fu">as.integer</span>(id)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  , <span class="at">y =</span> y</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prior settings</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_logN_mu =</span> <span class="fl">1.75</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  , <span class="at">mean_logN_sigma =</span> <span class="fl">0.25</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_logN_mu =</span> <span class="dv">2</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  , <span class="at">sd_logN_sigma =</span> <span class="fl">0.25</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>fit_logN_old <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> old_logN_model</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  , <span class="at">data =</span> logN_data_old</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  , <span class="at">iter =</span> <span class="dv">11000</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>  , <span class="at">warmup =</span> <span class="dv">1000</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>  , <span class="at">chains =</span> <span class="dv">4</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>  , <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: Rtools is required to build R packages, but is not currently installed.
+
+Please download and install the appropriate version of Rtools for 4.6.1 from
+https://cran.r-project.org/bin/windows/Rtools/.
+Trying to compile a simple C file</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running "C:/PROGRA~1/R/R-46~1.1/bin/x64/Rcmd.exe" SHLIB foo.c
+using C compiler: 'gcc.exe (GCC) 14.2.0'
+gcc  -I"C:/PROGRA~1/R/R-46~1.1/include" -DNDEBUG   -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/Rcpp/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/unsupported"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/BH/include" -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/src/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/"  -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppParallel/include/" -DRCPP_PARALLEL_USE_TBB=1 -DTBB_INTERFACE_NEW -IC:/Users/METHEX~1/AppData/Local/R/WIN-LI~1/4.6/RCPPPA~1/include -I"C:/Users/methexp labor/AppData/Local/R/win-library/4.6/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS  -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -D_HAS_AUTO_PTR_ETC=0  -include "C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/stan/math/prim/fun/Eigen.hpp"  -std=c++1y    -I"C:/rtools45/x86_64-w64-mingw32.static.posix/include"      -O2 -Wall -std=gnu2x  -mfpmath=sse -msse2 -mstackrealign   -c foo.c -o foo.o
+cc1.exe: warning: command-line option '-std=c++14' is valid for C++/ObjC++ but not for C
+In file included from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/Core:19,
+                 from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/Dense:1,
+                 from C:/Users/methexp labor/AppData/Local/R/win-library/4.6/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22,
+                 from &lt;command-line&gt;:
+C:/Users/methexp labor/AppData/Local/R/win-library/4.6/RcppEigen/include/Eigen/src/Core/util/Macros.h:679:10: fatal error: cmath: No such file or directory
+  679 | #include &lt;cmath&gt;
+      |          ^~~~~~~
+compilation terminated.
+make: *** [C:/PROGRA~1/R/R-46~1.1/etc/x64/Makeconf:297: foo.o] Error 1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING: Rtools is required to build R packages, but is not currently installed.
+
+Please download and install the appropriate version of Rtools for 4.6.1 from
+https://cran.r-project.org/bin/windows/Rtools/.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.000455 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.55 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 1: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 1: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 1: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 1: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 1: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 1: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 1: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 1: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 1: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 1: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 1: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 1.956 seconds (Warm-up)
+Chain 1:                14.187 seconds (Sampling)
+Chain 1:                16.143 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 0.000128 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 1.28 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 2: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 2: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 2: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 2: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 2: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 2: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 2: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 2: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 2: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 2: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 2: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 2.028 seconds (Warm-up)
+Chain 2:                14.214 seconds (Sampling)
+Chain 2:                16.242 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 0.000122 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 1.22 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 3: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 3: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 3: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 3: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 3: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 3: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 3: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 3: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 3: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 3: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 3: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 2.219 seconds (Warm-up)
+Chain 3:                14.206 seconds (Sampling)
+Chain 3:                16.425 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 0.000124 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 1.24 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:     1 / 11000 [  0%]  (Warmup)
+Chain 4: Iteration:  1001 / 11000 [  9%]  (Sampling)
+Chain 4: Iteration:  2100 / 11000 [ 19%]  (Sampling)
+Chain 4: Iteration:  3200 / 11000 [ 29%]  (Sampling)
+Chain 4: Iteration:  4300 / 11000 [ 39%]  (Sampling)
+Chain 4: Iteration:  5400 / 11000 [ 49%]  (Sampling)
+Chain 4: Iteration:  6500 / 11000 [ 59%]  (Sampling)
+Chain 4: Iteration:  7600 / 11000 [ 69%]  (Sampling)
+Chain 4: Iteration:  8700 / 11000 [ 79%]  (Sampling)
+Chain 4: Iteration:  9800 / 11000 [ 89%]  (Sampling)
+Chain 4: Iteration: 10900 / 11000 [ 99%]  (Sampling)
+Chain 4: Iteration: 11000 / 11000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 2.024 seconds (Warm-up)
+Chain 4:                14.071 seconds (Sampling)
+Chain 4:                16.095 seconds (Total)
+Chain 4: </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparison</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a> <span class="at">parameter =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>,<span class="st">"sigma_epsilon"</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a> , <span class="at">truth =</span> <span class="fu">c</span>(mu_theta, sigma_theta, sigma_epsilon)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a> ,<span class="at">bayes_joint_model =</span> fit_logN_joint <span class="sc">|&gt;</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(<span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>, <span class="st">"sigma_epsilon"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    (\(x) x<span class="sc">$</span>summary)() <span class="sc">|&gt;</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="st">"mean"</span>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a> , <span class="at">bayes_logN_only =</span> fit_logN_old <span class="sc">|&gt;</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summary</span>(<span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"mu_theta"</span>, <span class="st">"sigma_theta"</span>, <span class="st">"sigma_epsilon"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>    (\(x) x<span class="sc">$</span>summary)() <span class="sc">|&gt;</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="st">"mean"</span>)</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      parameter truth bayes_joint_model bayes_logN_only
+1      mu_theta   1.2         1.2812515       1.2479645
+2   sigma_theta   1.0         0.8563018       0.9113237
+3 sigma_epsilon   1.0         1.0066419       1.0015460</code></pre>
+</div>
+</div>
+</section>
 
 </main>
 <!-- /main column -->
