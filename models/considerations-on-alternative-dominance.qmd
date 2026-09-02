@@ -1,0 +1,75 @@
+---
+title: "Considerations on alternative dominance models"
+date: today
+date-format: long
+
+author:
+  - name: Frederik Aust
+    orcid: 0000-0003-4900-788X
+    email: frederik.aust@uni-koeln.de
+    affiliations:
+      - ref: uoc
+  - name: Alex Holcombe
+    orcid: 0000-0003-2869-0085
+    affiliations:
+      - ref: uos
+  - name: Leonie Schickmann
+    affiliations:
+      - ref: uoc
+
+affiliations:
+  - id: uoc
+    name: University of Cologne
+    city: Cologne
+    country: Germany
+  - id: uos
+    name: University of Sydney
+    city: Sydney
+    state: Australia
+
+theme: lumen
+toc: true
+highlight-style: github
+reference-location: margin
+
+html:
+  standalone: true
+  embed-resources: true
+  self-contained: true
+  link-external-icon: true
+  citations-hover: true
+  footnotes-hover: true
+---
+
+# Exponential distribution
+
+Parameter only interpretable after parametrizing as scale (1/lambda)? Idea of "rate parameter" or exponential as time/distance between two events not really applicable here? \
+Inconvenient: defined by one parameter, mean and standard deviation are the same. Thus less flexibility to choose priors that are comparable to priors of other models. -> Unfavorable model
+
+# Gamma distribution
+Gamma mean = alpha*rate or alpha/beta \
+Max entropy probability distribution -> advantageous, least-informative default? As we are uncertain about shape of distribution? \
+Parameters (alpha and beta) can reparameterized into mean and standard deviation. \
+Further considering underlying process? \
+NV models additive interplay of multiple independent predictors, logN models multiplicative interaction of multiple independent predictors.
+Special case of Gamma (Erlang) is distribution of the sum of alpha (integer) independent exponential variables with scale beta. AI: Event happens after multiple independent events happened. 
+Or other interpretation implied by other applications?
+
+# Weibull
+Formula for mean and standard deviation based on gamma function(k) -> no algebraic inverse, only numerical solution.
+Same approach as with truncated normal (you had an idea)? \
+Applications: time to failure or time to event. Difference to for example Gamma according to AI: not the concurrence of multiple other events determines if event occurs, but one other event is mainly responsible ("weakest link" in time to failure models). \
+In the FLE paradigm that I know of a rotating rod is shown for some time, then a static rod is flashed shortly before the rotating rod disappears, with degree of disalignment between static and rotating rod varying between trials (dva here?). Pb were asked to report which of the two targets (static or rotating) was ahead. How can "time until xyz" application be transfered onto this?
+ 
+# Inverse Gamma
+Reparameterisation to mean and sd possible. \
+Most commonly encountered as marginal post dist for variance of a normal distribution (in case of uninformative prior) or as a conjugate prior for precision of a normal distribution (in case of informative prior). In general describes the distribution of a variable whose reciprocal is distributed according to gamma distribution. \
+Y = dva (degress of visual angle) ~ Inverse Gamma -> What could be gamma distributed inverse of Y? (Open question, goes hand in hand with thoughts on transferability of "time to" application on our experiment). Maybe not "time" but "rate" more appropriate approximation -> then Inverse Gamma the better option?
+
+# For anyone's consideration:
+Inverse Gamma and specific cases of Gamma could be considered in the future. Gamma chosen for now since option with maximum entropy (least amount of prior assumptions). Felxibility should be considered in limitations, should Gamma be a bad fit ("sanctioned for its flexibility if special case is the better fit"). 
+
+
+
+
+
