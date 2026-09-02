@@ -219,31 +219,29 @@ data.frame(
   knitr::kable()
 ```
 
-# Validation of log-normal model
+# Validation of dominance models
+
+## Log-normal model
 
 ```{r}
-#| label: log-normal-data simulation
+#| label: data-simulation-log-normal
 
 # Simulate data
 
-sigma_epsilon <- 1
-mu_theta <- 1.2
-sigma_theta <- 1
-
-n_subjects <- 85
-n_trials <- 200
-id <- rep(1:n_subjects, each = n_trials)
+sigma_epsilon_logN <- 1
+mu_theta_logN <- 1.2
+sigma_theta_logN <- 1
 
 set.seed(123)
-theta <- rlnorm(n_subjects, meanlog = mu_theta, sdlog = sigma_theta)
-y <- rnorm(n_subjects*n_trials, mean = theta[id], sd = sigma_epsilon)
+theta_logN <- rlnorm(n_subjects, meanlog = mu_theta_logN, sdlog = sigma_theta_logN)
+y_logN <- rnorm(n_subjects*n_trials, mean = theta_logN[id], sd = sigma_epsilon_logN)
 
-sim_data_logN <- data.frame(id = id, y = y)
+sim_data_logN <- data.frame(id = id, y = y_logN)
 
 # Visualize data
 
-theta |> as.data.frame() |>
-  ggplot(aes(x = theta)) +
+theta_logN |> as.data.frame() |>
+  ggplot(aes(x = theta_logN)) +
   geom_histogram(bins = 15, color = "black", fill = "lightblue") +
   labs(title = "Histogram of Theta", x = "Theta", y = "Count")
 
@@ -262,14 +260,14 @@ sim_data_logN |>
 
 # Testing model 
 
-stan_model <- readLines("./models/pse-dominance-alternative.stan") |>
+stan_model_dom <- readLines("./models/pse-dominance-alternative.stan") |>
   paste(collapse = "\n")
 
 logN_data <- list(
   N = as.integer(n_subjects*n_trials)
   , n_subjects = as.integer(n_subjects)
   , id = as.integer(id)
-  , y = y
+  , y = sim_data_logN$y
   
   , condition = 0
   
@@ -281,7 +279,7 @@ logN_data <- list(
 )
 
 fit_logN_joint <- rstan::stan(
-  model_code = stan_model
+  model_code = stan_model_dom
   , data = logN_data
   , iter = 11000
   , warmup = 1000
@@ -298,7 +296,7 @@ logN_data_old <- list(
   N = as.integer(n_subjects*n_trials)
   , n_subjects = as.integer(n_subjects)
   , id = as.integer(id)
-  , y = y
+  , y = sim_data_logN$y
   
   # Prior settings
   , mean_logN_mu = 1.75
@@ -324,7 +322,7 @@ fit_logN_old <- rstan::stan(
 
 data.frame(
  parameter = c("mu_theta", "sigma_theta","sigma_epsilon")
- , truth = c(mu_theta, sigma_theta, sigma_epsilon)
+ , truth = c(mu_theta_logN, sigma_theta_logN, sigma_epsilon_logN)
  ,bayes_joint_model = fit_logN_joint |>
     summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon")) |>
     (\(x) x$summary)() |>
