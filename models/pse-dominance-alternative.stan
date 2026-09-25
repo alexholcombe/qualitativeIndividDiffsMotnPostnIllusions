@@ -1,82 +1,118 @@
 
+functions{
+  real logN_model_lpdf(vector theta_hat, real param1, real param2){  
+    return normal_lpdf(theta_hat | param1, param2);
+  }
+  
+  real gamma_model_lpdf(vector theta_hat, real param1, real param2){  
+    return gamma_lpdf(theta_hat | param1, 1);
+    
+  }
+  
+  real model_lpdf(vector theta_hat, real param1, real param2, real condition){     
+    if(condition == 1) return logN_model_lpdf(theta_hat | param1, param2);         
+    else if(condition == 2) return gamma_model_lpdf(theta_hat | param1, param2);
+    else reject("model_lpdf: unsupported condition =", condition);
+    return negative_infinity();
+  }
+  
+  real calc_param(real m, real s, int code, real condition){
+    if(code == 1) {
+      if(condition == 1) return log( square(m)/sqrt(square(s) + square(m)) );
+      else if(condition == 2) return square(m)/square(s);
+      else reject("calc_param: unsupported condition =", condition);
+      return negative_infinity();
+    }
+    else if(code == 2){
+      if(condition == 1) return sqrt(log1p( square(s)/square(m) ));
+      else if(condition == 2) return m/square(s);
+      else reject("calc_param: unsupported condition =", condition);
+      return negative_infinity();
+    }
+    else reject("calc_param: there is no parameter number ", code);
+    return negative_infinity();
+  }
+  
+  vector calc_theta(vector theta_hat, real param1, real param2, real condition){
+    if(condition == 1){
+      vector[num_elements(theta_hat)] theta_log = exp(theta_hat);
+      return theta_log;
+    }
+    else if(condition == 2){
+      vector[num_elements(theta_hat)] theta_gamma = theta_hat/param2;
+      return theta_gamma;
+    }
+    else {
+      reject("model_lpdf: unsupported condition =", condition);
+      return rep_vector(negative_infinity(),num_elements(theta_hat));
+    }
+  }
+}
+
 data {
   int<lower=0> N;                                  // number of data points
   int<lower=0> n_subjects;                         // number of subjects
-  array[N] int<lower=1, upper=n_subjects> id;      // subject ID
+  array[N] int <lower=1, upper=n_subjects> id;      // subject ID
   vector[N] y;                                     // response variable
   
   // model condition
-  int<lower=0, upper=1> condition; // 0 = log normal, 1 = gamma
+  int<lower=1, upper=2> condition; // 1 = log normal, 2 = gamma
                                    
-  // Prior hyperparameters
-  real mean_prior_mu;
-  real <lower = 0> mean_prior_sigma;       // hyperpara for prior on mean of the distribution
-  real sd_prior_mu; 
-  real <lower = 0> sd_prior_sigma;         // hyperpara for prior on sd of the distribution
-  
-  // Conditions inside data and parameter block?
-  // https://mc-stan.org/docs/2_25/reference-manual/conditional-operator-section.html
-  // https://discourse.mc-stan.org/t/if-else-statement-inside-parameter-block/13937/2
+  // Prior hyperparameters                                                                    
+  real mean_theta_prior_mu;
+  real <lower = 0> mean_theta_prior_sigma;       // hyperpara for log-normal prior on mean of the distribution
+  real sd_theta_prior_mu; 
+  real <lower = 0> sd_theta_prior_sigma;         // hyperpara for log-normal prior on sd of the distribution
 }
 
-transformed data {
-  int logN = condition ? 0:1;   // TRUE if condition = 0
-  int gamma = condition ? 1:0;  // TRUE if condition = 1
-}
-
-parameters {
-  array [1] real <offset = mean_prior_mu, multiplier = mean_prior_sigma> mean_prior_hat;
-  array [1] real <offset = sd_prior_mu, multiplier = sd_prior_sigma> sd_prior_hat;
+parameters {                                                                                
+  real <offset = mean_theta_prior_mu, multiplier = mean_theta_prior_sigma> mean_theta_hat;
+  real <offset = sd_theta_prior_mu, multiplier = sd_theta_prior_sigma> sd_theta_hat;
   
-  vector <lower =0> [n_subjects] theta_hat;
+  vector <lower = (condition == 2 ? 0 : negative_infinity())> [n_subjects] theta_hat; //CHECK OB SO FUNKT/SYN KORREKT MIT ==2!
   real <lower = 0> sigma_epsilon; 
 }
 
-transformed parameters {
-  array [1] real <lower = 0> mean_prior = exp(mean_prior_hat);            // prior log normal distributed
-  array [1] real <lower = 0> sd_prior = exp(sd_prior_hat);                // prior log normal distributed
+transformed parameters {                                                            
+  real <lower = 0> mean_theta = exp(mean_theta_hat);            // prior log normal distributed
+  real <lower = 0> sd_theta = exp(sd_theta_hat);                // prior log normal distributed
   
- // reparameterization of mean and sd
- array [logN] real mu_theta;     
- array [logN] real <lower = 0> sigma_theta;
- array [gamma] real <lower = 0> alpha_theta;
- array [gamma] real <lower = 0> beta_theta;       
-                                                     
- vector [ n_subjects] theta;
+ // model parameter calculation
+ real <lower = (condition == 2 ? 0 : negative_infinity())> param1 = calc_param(mean_theta, sd_theta, 1, condition);
+ real <lower = 0> param2 = calc_param(mean_theta, sd_theta, 2, condition);
  
-  if (logN){   // log normal
-    mu_theta[logN] = log( (mean_prior[1]^2) / (sqrt(sd_prior[1]^2 + mean_prior[1]^2)) );   // transforming mean and sd into model parameters
-    sigma_theta[logN] = log( (sd_prior[1]^2)/(mean_prior[1]^2) + 1 );
-
-    theta = exp(theta_hat);
-  }
-  else if (gamma){ // gamma
-    alpha_theta[gamma] = mean_prior[1]^2 / sd_prior[1]^2;   // transforming mean and sd into model parameters
-    beta_theta[gamma] = mean_prior[1] / sd_prior[1]^2;    // transforming mean and sd into model parameters
-    
-    theta = theta_hat / beta_theta[gamma];
-  }
+ // calculation of theta
+ vector <lower=0> [n_subjects] theta = calc_theta(theta_hat, param1, param2, condition);
 }
 
 model {
  // Priors
-  target += normal_lpdf(sd_prior_hat | sd_prior_mu, sd_prior_sigma);
-  target += normal_lpdf(mean_prior_hat | mean_prior_mu, mean_prior_sigma);  
+  target += normal_lpdf(sd_theta_hat | sd_theta_prior_mu, sd_theta_prior_sigma);
+  target += normal_lpdf(mean_theta_hat | mean_theta_prior_mu, mean_theta_prior_sigma);  
 
- // theta conditioned on model 
-  if (logN){   // log normal
-    target += normal_lpdf(theta_hat | mu_theta[logN], sigma_theta[logN]);
-  }
-  else if (gamma) { // gamma
-    target += gamma_lpdf(theta_hat | alpha_theta[gamma], 1);
-  }
+ // theta conditioned on model                                                    
+  target += model_lpdf(theta_hat | param1, param2, condition);
  
  // measurement error
-  target += log(1/sigma_epsilon^2);                    // Jeffreys prior on sigma2
+  target += -log(sigma_epsilon);                    // Jeffreys prior on sigma2
   
  // Likelihood
   target += normal_lpdf(y | theta[id], sigma_epsilon);
- 
- 
 }
 
+generated quantities {
+  // rename parameter
+  real mu_theta; 
+  real sigma_theta;
+  real alpha_theta; 
+  real beta_theta; 
+  
+  if(condition == 1){
+    mu_theta = param1;
+    sigma_theta = param2;
+  }
+  else if(condition == 2){
+    alpha_theta = param1;
+    beta_theta = param2;
+  }
+}

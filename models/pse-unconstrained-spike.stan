@@ -54,7 +54,7 @@ model {
   target += normal_lpdf(p_hat_negative_spike | pi_mean, pi_sd);
   target += normal_lpdf(omega_hat | omega_mean, omega_sd);
   target += normal_lpdf(theta | mu_theta, sigma_theta);  // applies unconditionally; see write-up
-  target += log(1 / sigma_epsilon^2);                    // Jeffreys prior on sigma_epsilon^2
+  target += -log(sigma_epsilon);                     // Jeffreys prior on sigma_epsilon^2
 
   // Marginalize the discrete responder/non-responder indicator, subject by subject
   for (s in 1:n_subjects) {

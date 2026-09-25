@@ -14,7 +14,7 @@ parameters {    // model parameters that are inferred in model (which priors exi
 
 model {
   // Priors
-  target += log(1/sigma_epsilon^2); // Jeffreys prior on sigma2
+  target += -log(sigma_epsilon);  // Jeffreys prior on sigma2
   
   // Likelihood
   target += normal_lpdf(y | 0, sigma_epsilon);

@@ -37,7 +37,7 @@ model {
   target += normal_lpdf(mean_gamma_hat | mean_gamma_mu, mean_gamma_sigma);  
   
   target += gamma_lpdf(theta_hat | alpha_theta, 1);
-  target += log(1/sigma_epsilon^2);                    // Jeffreys prior on sigma2
+  target += -log(sigma_epsilon);                    // Jeffreys prior on sigma2
   
   // Likelihood
   target += normal_lpdf(y | theta[id], sigma_epsilon);

@@ -169,32 +169,6 @@ fit <- rstan::stan(
   , chains = 4
   , cores = 4
   , seed = 123
-  , init = list(
-    list(
-      mu_theta = 1
-      , sigma_theta = 1
-      , sigma2_epsilon = 1
-      , theta = rep(1, n_subjects)
-    )
-    , list(
-      mu_theta = 1
-      , sigma_theta = 0.5
-      , sigma2_epsilon = 0.5
-      , theta = rep(1, n_subjects)
-    )
-    , list(
-      mu_theta = 2
-      , sigma_theta = 2
-      , sigma2_epsilon = 2
-      , theta = rep(1, n_subjects)
-    )
-    , list(
-      mu_theta = 1
-      , sigma_theta = 1
-      , sigma2_epsilon = 1
-      , theta = rep(1, n_subjects)
-    )
-  )
 )
 ```
 
@@ -269,13 +243,13 @@ logN_data <- list(
   , id = as.integer(id)
   , y = sim_data_logN$y
   
-  , condition = 0
+  , condition = 1
   
   # Prior settings
-  , mean_prior_mu = 1.75
-  , mean_prior_sigma = 0.25
-  , sd_prior_mu = 2
-  , sd_prior_sigma = 0.25
+  , mean_theta_prior_mu = 1.75
+  , mean_theta_prior_sigma = 0.25
+  , sd_theta_prior_mu = 2
+  , sd_theta_prior_sigma = 0.25
 )
 
 fit_logN_joint <- rstan::stan(
@@ -336,3 +310,123 @@ data.frame(
 )
 ```
 
+## Gamma model
+
+```{r}
+#| label: data-simulation-gamma
+
+# Simulate data
+
+sigma_epsilon_gamma <- 1
+alpha_gamma <- 2
+beta_gamma <- 0.5
+
+set.seed(123)
+theta_gamma <- rgamma(n_subjects, shape = alpha_gamma, rate = beta_gamma)
+y_gamma <- rnorm(n_subjects*n_trials, mean = theta_gamma[id], sd = sigma_epsilon_gamma)
+
+sim_data_gamma <- data.frame(id = id, y = y_gamma)
+
+# Visualize data
+
+theta_gamma |> as.data.frame() |>
+  ggplot(aes(x = theta_gamma)) +
+  geom_histogram(bins = 15, color = "black", fill = "lightblue") +
+  labs(title = "Histogram of Theta", x = "Theta", y = "Count")
+
+```
+
+```{r}
+#| label: gamma-model-validation
+
+# Testing single model
+
+old_gamma_model <- readLines("./models/pse-dominance-gamma.stan") |>
+  paste(collapse = "\n")
+
+gamma_data_old <- list(
+   N = as.integer(n_subjects*n_trials)
+  , n_subjects = as.integer(n_subjects)
+  , id = as.integer(id)
+  , y = sim_data_gamma$y
+  
+  # Prior settings
+  , mean_gamma_mu = 3
+  , mean_gamma_sigma = 1
+  , sd_gamma_mu = 1.5
+  , sd_gamma_sigma = 1
+)
+
+fit_gamma_old <- rstan::stan(
+  model_code = old_gamma_model
+  , data = gamma_data_old
+  , iter = 11000
+  , warmup = 1000
+  , chains = 4
+  , seed = 123
+)
+
+str_post_gamma_old <- data.frame(summary(fit_gamma_old)$summary)
+max(str_post_gamma_old$Rhat)
+check_hmc_diagnostics(fit_gamma_old)
+
+# Testing joint model
+
+gamma_data <- list(
+   N = as.integer(n_subjects*n_trials)
+  , n_subjects = as.integer(n_subjects)
+  , id = as.integer(id)
+  , y = sim_data_gamma$y
+  
+  , condition = 2
+  
+  # Prior settings
+  , mean_theta_prior_mu = 3
+  , mean_theta_prior_sigma = 1
+  , sd_theta_prior_mu = 1.5
+  , sd_theta_prior_sigma = 1
+)
+
+fit_gamma_joint <- rstan::stan(    # doesnt work atm, too many theta<0 without theta_hat constraint, initialization fails 
+  model_code = stan_model_dom      # to do: init value von alpha so definieren, dass alpha <1, weil sonst bei alpha >=1 und theta_hat =0 Prob(theta_hat)=0
+  , data = gamma_data              # unter Annahme der Gamma Verteilung, wovon dann log(Prob) = minus unendlich ist -> interpret als absolut unmöglich
+  , iter = 11000                   # Mit einer unendlichen logLikelihood kann Stan aber genauso wenig rechnen
+  , warmup = 1000
+  , chains = 4
+  , seed = 123
+)
+
+str_post_gamma_joint <- data.frame(summary(fit_gamma_joint)$summary)
+max(str_post_gamma_joint$Rhat, na.rm = T)
+check_hmc_diagnostics(fit_gamma_joint)
+
+```
+
+```{r}
+#| label: comparison-table-gamma
+
+# Comparison
+
+data.frame(
+ parameter = c("alpha_theta", "beta_theta","sigma_epsilon")
+ , truth = c(alpha_gamma, beta_gamma, sigma_epsilon_gamma)
+ ,bayes_joint_model = fit_gamma_joint |>
+    summary(pars = c("alpha_theta", "beta_theta", "sigma_epsilon")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+    dplyr::pull("mean")
+ , bayes_gamma_only = fit_gamma_old |>
+   summary(pars = c("alpha_theta", "beta_theta", "sigma_epsilon")) |>
+    (\(x) x$summary)() |>
+    as.data.frame() |>
+   dplyr::pull("mean")
+)
+
+# ESS diagnostics
+
+posterior::as_draws_df(fit_gamma_joint, .nchains = 4) |>
+  extract_variable_matrix("sd_prior[1]") |>
+  ess_bulk()
+
+
+```

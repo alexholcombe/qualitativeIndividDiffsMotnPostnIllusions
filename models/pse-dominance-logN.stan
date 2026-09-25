@@ -1,9 +1,9 @@
 
 data {
-  int<lower=0> N;                 // number of data points
-  int<lower=0> n_subjects;        // number of subjects
-  array[N] int id;                // subject ID  
-  vector[N] y;                    // response variable
+  int<lower=0> N;                                             // number of data points
+  int<lower=0> n_subjects;                                    // number of subjects
+  array[N] int <lower=1, upper=n_subjects> id;                // subject ID  
+  vector[N] y;                                                // response variable
   
   // Hyperparameters of prior distributions on mean and sd of theta
   real mean_logN_mu;
@@ -25,7 +25,7 @@ transformed parameters {
   real <lower = 0> sd_logN = exp(sd_logN_hat);                // prior log normal distributed
   
   real mu_theta = log( (mean_logN^2) / (sqrt(sd_logN^2 + mean_logN^2)) );   // transforming mean and sd into model parameters
-  real <lower = 0> sigma_theta = log( (sd_logN^2)/(mean_logN^2) + 1 );
+  real <lower = 0> sigma_theta = sqrt(log( (sd_logN^2)/(mean_logN^2) + 1 ));
   
   vector [n_subjects] theta = exp(theta_hat);           // model assumes log-normal distributed theta
 }
@@ -37,7 +37,7 @@ model {
   target += normal_lpdf(mean_logN_hat | mean_logN_mu, mean_logN_sigma);  
   
   target += normal_lpdf(theta_hat | mu_theta, sigma_theta);
-  target += log(1/sigma_epsilon^2);                    // Jeffreys prior on sigma2
+  target += -log(sigma_epsilon);                     // Jeffreys prior on sigma2
   
   // Likelihood
   target += normal_lpdf(y | theta[id], sigma_epsilon);
