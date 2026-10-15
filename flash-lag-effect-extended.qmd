@@ -1145,10 +1145,12 @@ log_normal_caterpillar <- theta_i_logN |>
 ```{r}
 #| label: fig-post-population-distribution-log-normal
 
-post_populDist_logN <- tidybayes::gather_draws(
+post_data_logN <- tidybayes::gather_draws(
   fle_logN_bayes
   , mu_theta, sigma_theta
-) |>  
+) 
+
+post_populDist_logN <- post_data_logN|>  
   tidyr::nest(data = c(.chain, .iteration, .draw)) |>
   tidyr::pivot_wider(names_from = .variable, values_from = .value) |>
   mutate(
@@ -1519,7 +1521,7 @@ post_populPara_spike <- tidybayes::gather_draws(
 
 data.frame(
   parameter = c("mu_theta", "sigma_theta", "sigma_epsilon", "P(theta_i < 0)", "P(theta_i <= 0)", "P(theta_i = 0)")
-  , spike = fle_spike_test_bayes |>
+  , spike = fle_unconstrained_spike_bayes |>
     summary(pars = c("mu_theta", "sigma_theta", "sigma_epsilon", "p_negative_theta", "p_negative_spike", "omega")) |>
     (\(x) x$summary)() |>
     as.data.frame() |>
